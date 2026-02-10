@@ -3,73 +3,276 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daniel Attfield - Technical Business Analyst</title>
+    <title>Daniel Attfield — Technical Business Analyst</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-primary: #0D1117;
+            --bg-secondary: #161B22;
+            --bg-card: rgba(22, 27, 34, 0.6);
+            --text-primary: #E6EDF3;
+            --text-secondary: #8B949E;
+            --text-muted: #484F58;
+            --accent-pink: #D83E9C;
+            --accent-purple: #8E5FA8;
+            --accent-blue: #58A6FF;
+            --accent-green: #3FB950;
+            --border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #0D1117;
-            color: #C9D1D9;
+            background-color: var(--bg-primary);
+            color: var(--text-secondary);
+            overflow-x: hidden;
         }
-        h1, h2, h3, h4 {
-            font-family: 'Space Grotesk', sans-serif;
-        }
+
+        h1, h2, h3, h4 { font-family: 'Space Grotesk', sans-serif; color: var(--text-primary); }
+
+        .mono { font-family: 'JetBrains Mono', monospace; }
+
+        /* Glass Card */
         .glass-card {
-            background: rgba(22, 27, 34, 0.6);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
         }
-        .accent-gradient {
-            background: linear-gradient(90deg, #D83E9C, #8E5FA8);
+
+        .glass-card-hover {
+            transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
         }
-        .section-fade-in {
+        .glass-card-hover:hover {
+            border-color: rgba(216, 62, 156, 0.3);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(216, 62, 156, 0.1);
+        }
+
+        /* Gradient utilities */
+        .accent-gradient { background: linear-gradient(135deg, #D83E9C, #8E5FA8); }
+        .accent-gradient-text {
+            background: linear-gradient(135deg, #D83E9C, #8E5FA8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Network Canvas */
+        #network-canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            opacity: 0.4;
+        }
+
+        /* Terminal */
+        .terminal {
+            background: #0a0e14;
+            border: 1px solid #1e2a3a;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .terminal-header {
+            background: #151d2b;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .terminal-dot {
+            width: 12px; height: 12px;
+            border-radius: 50%;
+        }
+        .terminal-body {
+            padding: 20px;
+            min-height: 160px;
+        }
+        .terminal-cursor {
+            display: inline-block;
+            width: 10px;
+            height: 1.1em;
+            background: var(--accent-pink);
+            animation: blink 1s step-end infinite;
+            vertical-align: text-bottom;
+            margin-left: 2px;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        .terminal-prompt { color: var(--accent-green); }
+        .terminal-command { color: var(--text-primary); }
+        .terminal-output { color: var(--text-secondary); }
+        .terminal-highlight { color: var(--accent-pink); }
+
+        /* Integration Ticker */
+        .ticker-wrapper {
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+        }
+        .ticker-wrapper::before,
+        .ticker-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 0; bottom: 0;
+            width: 80px;
+            z-index: 2;
+            pointer-events: none;
+        }
+        .ticker-wrapper::before { left: 0; background: linear-gradient(90deg, var(--bg-primary), transparent); }
+        .ticker-wrapper::after { right: 0; background: linear-gradient(-90deg, var(--bg-primary), transparent); }
+
+        .ticker-track {
+            display: inline-flex;
+            animation: ticker-scroll 40s linear infinite;
+            gap: 24px;
+        }
+        .ticker-track:hover { animation-play-state: paused; }
+
+        @keyframes ticker-scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .ticker-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 999px;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+        .ticker-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+        @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        /* Flow Builder */
+        .flow-step {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+        .flow-step.active {
+            border-color: var(--accent-pink);
+            box-shadow: 0 0 20px rgba(216, 62, 156, 0.2);
+        }
+        .flow-step.completed {
+            border-color: var(--accent-green);
+        }
+        .flow-connector {
+            height: 3px;
+            background: var(--text-muted);
+            transition: background 0.6s;
+            flex-grow: 1;
+            min-width: 20px;
+            position: relative;
+        }
+        .flow-connector.active {
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-pink));
+        }
+        .flow-connector.completed {
+            background: var(--accent-green);
+        }
+        .data-packet {
+            position: absolute;
+            width: 10px; height: 10px;
+            background: var(--accent-pink);
+            border-radius: 50%;
+            top: -4px;
+            animation: packet-move 1s ease-in-out forwards;
+            box-shadow: 0 0 10px var(--accent-pink);
+        }
+        @keyframes packet-move {
+            0% { left: 0; opacity: 1; }
+            100% { left: calc(100% - 10px); opacity: 1; }
+        }
+
+        /* Radar Chart */
+        #radar-canvas {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        /* Stats counter */
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            font-family: 'Space Grotesk', sans-serif;
+            line-height: 1;
+        }
+
+        /* Section animations */
+        .section-reveal {
             opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+            transform: translateY(30px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
         }
-        .section-fade-in.visible {
+        .section-reveal.visible {
             opacity: 1;
             transform: translateY(0);
         }
-        .timeline-item::before {
+
+        /* Timeline */
+        .timeline-container { position: relative; }
+        .timeline-container::before {
             content: '';
             position: absolute;
-            left: -30px;
-            top: 5px;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background-color: #30363D;
-            border: 4px solid #D83E9C;
-        }
-        .timeline-line {
-            position: absolute;
-            left: -21px;
-            top: 0;
-            bottom: 0;
+            left: 20px;
+            top: 0; bottom: 0;
             width: 2px;
-            background-color: #30363D;
+            background: linear-gradient(to bottom, var(--accent-pink), var(--accent-purple), transparent);
         }
-        .flow-diagram-arrow {
-            flex-grow: 1;
-            background-image: url("data:image/svg+xml,%3Csvg width='100' height='10' viewBox='0 0 100 10' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 5H98M98 5L93 1M98 5L93 9' stroke='%234B5563' stroke-width='2'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: center;
-            min-height: 20px;
+        .timeline-node {
+            position: absolute;
+            left: 12px;
+            top: 28px;
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            border: 3px solid var(--accent-pink);
+            background: var(--bg-primary);
+            z-index: 1;
+            transition: all 0.3s;
         }
-        .flow-diagram-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            font-size: 0.8rem;
+        .timeline-entry:hover .timeline-node {
+            background: var(--accent-pink);
+            box-shadow: 0 0 12px var(--accent-pink);
         }
-         .flow-diagram-item div:first-child {
-            font-size: 1.5rem;
-         }
+
+        /* Mobile menu */
+        .mobile-menu {
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: #30363D; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #484F58; }
+
+        /* Flow detail panel */
+        .flow-detail-panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease, opacity 0.3s ease;
+            opacity: 0;
+        }
+        .flow-detail-panel.open {
+            max-height: 300px;
+            opacity: 1;
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -77,250 +280,819 @@
     <!-- Header -->
     <header class="sticky top-0 z-50 glass-card">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="text-2xl font-bold text-white">DA.</div>
-            <div class="hidden md:flex items-center space-x-6">
-                <a href="#experience" class="hover:text-pink-500 transition-colors">Experience</a>
-                <a href="#projects" class="hover:text-pink-500 transition-colors">Projects</a>
-                <a href="#competencies" class="hover:text-pink-500 transition-colors">Competencies</a>
-                <a href="#contact" class="hover:text-pink-500 transition-colors">Contact</a>
+            <a href="#" class="text-2xl font-bold text-white tracking-tight">DA<span class="accent-gradient-text">.</span></a>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#about" class="text-sm hover:text-white transition-colors">About</a>
+                <a href="#experience" class="text-sm hover:text-white transition-colors">Experience</a>
+                <a href="#projects" class="text-sm hover:text-white transition-colors">Projects</a>
+                <a href="#competencies" class="text-sm hover:text-white transition-colors">Competencies</a>
+                <a href="#contact" class="accent-gradient text-white text-sm font-semibold py-2 px-5 rounded-lg hover:opacity-90 transition-opacity">Contact</a>
             </div>
-            <button id="share-button" class="accent-gradient text-white font-bold py-2 px-4 rounded-lg flex items-center space-x-2 hover:opacity-90 transition-opacity">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
-                <span>Share</span>
+            <button id="mobile-toggle" class="md:hidden text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
             </button>
         </nav>
     </header>
 
-    <main class="container mx-auto px-6 py-16">
-        <!-- Hero Section -->
-        <section id="profile" class="text-center min-h-[60vh] flex flex-col justify-center items-center">
-            <h1 class="text-5xl md:text-7xl font-bold text-white leading-tight">Daniel Attfield</h1>
-            <h2 class="text-2xl md:text-3xl accent-gradient text-transparent bg-clip-text font-semibold mt-2">Technical Business Analyst</h2>
-            <p class="mt-6 max-w-3xl text-lg text-gray-400">
-                I focus on connecting data and systems to make day-to-day work simpler for users and more efficient for the business. I translate complex business needs into practical, automated, working systems using Azure, Power Platform, and modern integration patterns.
-            </p>
-            <div class="mt-8 flex space-x-4">
-                <a href="https://linkedin.com/in/danattfield" target="_blank" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg transition-colors">LinkedIn</a>
-                <a href="#contact" class="accent-gradient text-white font-bold py-3 px-6 rounded-lg hover:opacity-90 transition-opacity">Get In Touch</a>
-            </div>
-        </section>
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="mobile-menu fixed inset-y-0 right-0 w-72 z-50 bg-[#161B22] border-l border-white/10 p-8 flex flex-col space-y-6">
+        <button id="mobile-close" class="self-end text-white mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <a href="#about" class="text-lg text-white hover:text-pink-400 transition-colors mobile-link">About</a>
+        <a href="#experience" class="text-lg text-white hover:text-pink-400 transition-colors mobile-link">Experience</a>
+        <a href="#projects" class="text-lg text-white hover:text-pink-400 transition-colors mobile-link">Projects</a>
+        <a href="#competencies" class="text-lg text-white hover:text-pink-400 transition-colors mobile-link">Competencies</a>
+        <a href="#contact" class="text-lg text-white hover:text-pink-400 transition-colors mobile-link">Contact</a>
+    </div>
+    <div id="mobile-overlay" class="fixed inset-0 bg-black/50 z-40 hidden"></div>
 
-        <!-- Experience Section -->
-        <section id="experience" class="py-20 section-fade-in">
-            <h2 class="text-4xl font-bold text-center text-white mb-12">Professional Experience</h2>
-            <div class="relative max-w-3xl mx-auto">
-                <div class="timeline-line"></div>
-                <div id="timeline-container" class="space-y-12">
-                    <!-- Timeline items will be injected by JS -->
-                </div>
-            </div>
-        </section>
-        
-        <!-- Projects Section -->
-        <section id="projects" class="py-20 section-fade-in">
-            <h2 class="text-4xl font-bold text-center text-white mb-12">Key Project Highlights</h2>
-            <div class="space-y-12">
-                <!-- Project 1: Order-to-Cash -->
-                <div class="glass-card rounded-lg p-8">
-                    <h3 class="text-2xl font-bold text-white">Automated Order-to-Cash Pipeline</h3>
-                    <p class="text-gray-400 mt-2 max-w-4xl">Architected an end-to-end integration to automate the process from a ‘deal won’ in HubSpot to financial reconciliation in Xero. This eliminated manual data entry, reduced onboarding time by 90%, and ensured data integrity across all systems.</p>
-
-                    <div class="my-6">
-                        <div class="flex items-center justify-between">
-                            <div class="flow-diagram-item w-20"><div>📄</div><span>HubSpot</span></div>
-                            <div class="flow-diagram-arrow"></div>
-                            <div class="flow-diagram-item w-20"><div>⚙️</div><span>Azure</span></div>
-                            <div class="flow-diagram-arrow"></div>
-                            <div class="flow-diagram-item w-20"><div>📦</div><span>ERP</span></div>
-                            <div class="flow-diagram-arrow"></div>
-                            <div class="flow-diagram-item w-20"><div>💳</div><span>Stripe</span></div>
-                            <div class="flow-diagram-arrow"></div>
-                            <div class="flow-diagram-item w-20"><div>🧾</div><span>Xero</span></div>
+    <main>
+        <!-- ======================== HERO ======================== -->
+        <section class="relative min-h-screen flex items-center justify-center overflow-hidden">
+            <canvas id="network-canvas"></canvas>
+            <div class="relative z-10 container mx-auto px-6 py-20">
+                <div class="max-w-4xl mx-auto">
+                    <!-- Terminal component -->
+                    <div class="terminal max-w-2xl mx-auto mb-10">
+                        <div class="terminal-header">
+                            <div class="terminal-dot" style="background:#FF5F57"></div>
+                            <div class="terminal-dot" style="background:#FEBC2E"></div>
+                            <div class="terminal-dot" style="background:#28C840"></div>
+                            <span class="text-xs text-gray-500 ml-2 mono">daniel@systems ~</span>
+                        </div>
+                        <div class="terminal-body mono text-sm leading-relaxed">
+                            <div id="terminal-output"></div>
                         </div>
                     </div>
-                    
-                    <h4 class="font-semibold text-white mb-3">Technical Flow Breakdown:</h4>
-                    <ol class="list-decimal list-inside space-y-2 text-gray-300">
-                        <li><strong>Trigger:</strong> A webhook in HubSpot fires on "Deal Won", sending customer and deal data to a secure endpoint.</li>
-                        <li><strong>Gateway & Orchestration:</strong> Azure API Management receives the payload, authenticating and routing it to an Azure Logic App. This orchestrates the entire workflow.</li>
-                        <li><strong>ERP Sync:</strong> The Logic App creates a new customer and project in the ERP via its REST API, transforming HubSpot data to match the ERP schema.</li>
-                        <li><strong>Payment Initiation:</strong> Upon successful ERP entry, the Logic App calls the Stripe API to generate an invoice and a secure payment link.</li>
-                        <li><strong>Financial Reconciliation:</strong> A second webhook from Stripe (on 'payment_successful') triggers another Logic App function to create a corresponding sales invoice in Xero.</li>
-                        <li><strong>Notifications:</strong> The process concludes by posting real-time status updates to a dedicated Microsoft Teams channel for stakeholder visibility.</li>
-                    </ol>
+
+                    <div class="text-center">
+                        <h1 class="text-5xl md:text-7xl font-bold leading-tight">
+                            Daniel <span class="accent-gradient-text">Attfield</span>
+                        </h1>
+                        <p class="text-xl md:text-2xl mt-4 text-gray-400 max-w-2xl mx-auto">
+                            I connect the systems your business runs on — so data flows, processes automate, and people focus on work that matters.
+                        </p>
+                        <div class="mt-8 flex flex-wrap justify-center gap-4">
+                            <a href="https://linkedin.com/in/danattfield" target="_blank" class="glass-card glass-card-hover text-white font-semibold py-3 px-6 rounded-lg flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                                LinkedIn
+                            </a>
+                            <a href="#contact" class="accent-gradient text-white font-semibold py-3 px-6 rounded-lg hover:opacity-90 transition-opacity">
+                                Get In Touch →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================== LIVE TICKER ======================== -->
+        <div class="py-6 border-y border-white/5">
+            <div class="ticker-wrapper">
+                <div class="ticker-track" id="ticker-track">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ======================== ABOUT / STATS ======================== -->
+        <section id="about" class="py-24 section-reveal">
+            <div class="container mx-auto px-6">
+                <div class="max-w-4xl mx-auto text-center mb-16">
+                    <h2 class="text-4xl font-bold mb-6">Bridging Business <span class="accent-gradient-text">&</span> Technology</h2>
+                    <p class="text-lg text-gray-400 leading-relaxed max-w-3xl mx-auto">
+                        I'm a Technical Business Analyst based in Bristol, UK. I specialise in taking complex, messy business processes and turning them into clean, automated workflows. Whether it's connecting a CRM to an ERP, building offline-first field apps, or designing an end-to-end order pipeline — I translate what the business needs into systems that actually work.
+                    </p>
+                </div>
+
+                <!-- Impact Stats -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+                    <div class="glass-card rounded-xl p-6 text-center glass-card-hover">
+                        <div class="stat-number accent-gradient-text" data-target="90" data-suffix="%">0%</div>
+                        <p class="text-sm text-gray-400 mt-2">Onboarding Time Reduced</p>
+                    </div>
+                    <div class="glass-card rounded-xl p-6 text-center glass-card-hover">
+                        <div class="stat-number accent-gradient-text" data-target="15" data-suffix="+">0</div>
+                        <p class="text-sm text-gray-400 mt-2">APIs Integrated</p>
+                    </div>
+                    <div class="glass-card rounded-xl p-6 text-center glass-card-hover">
+                        <div class="stat-number accent-gradient-text" data-target="100" data-suffix="s">0</div>
+                        <p class="text-sm text-gray-400 mt-2">Hours Saved Weekly</p>
+                    </div>
+                    <div class="glass-card rounded-xl p-6 text-center glass-card-hover">
+                        <div class="stat-number accent-gradient-text" data-target="5" data-suffix="+">0</div>
+                        <p class="text-sm text-gray-400 mt-2">Systems Connected</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================== EXPERIENCE ======================== -->
+        <section id="experience" class="py-24 section-reveal">
+            <div class="container mx-auto px-6">
+                <h2 class="text-4xl font-bold text-center mb-16">Where I've <span class="accent-gradient-text">Worked</span></h2>
+                <div class="max-w-3xl mx-auto timeline-container" id="timeline-container">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================== PROJECTS ======================== -->
+        <section id="projects" class="py-24 section-reveal">
+            <div class="container mx-auto px-6">
+                <h2 class="text-4xl font-bold text-center mb-4">Project <span class="accent-gradient-text">Highlights</span></h2>
+                <p class="text-center text-gray-400 mb-16 max-w-2xl mx-auto">Click through the flow below to see how I architect end-to-end integrations — or explore the project cards.</p>
+
+                <!-- Interactive Flow Builder -->
+                <div class="glass-card rounded-xl p-8 mb-12 max-w-5xl mx-auto">
+                    <h3 class="text-xl font-bold mb-2">Order-to-Cash Pipeline</h3>
+                    <p class="text-gray-400 text-sm mb-8">Click each step to trace data through the system →</p>
+
+                    <!-- Flow Steps -->
+                    <div class="flex items-center justify-between mb-6 overflow-x-auto pb-4" id="flow-steps">
+                        <!-- Populated by JS -->
+                    </div>
+
+                    <!-- Flow Detail Panel -->
+                    <div id="flow-detail" class="flow-detail-panel glass-card rounded-lg p-6">
+                        <div class="flex items-start gap-4">
+                            <div id="flow-detail-icon" class="text-3xl flex-shrink-0"></div>
+                            <div>
+                                <h4 id="flow-detail-title" class="font-bold text-white text-lg"></h4>
+                                <p id="flow-detail-desc" class="text-gray-400 mt-1 text-sm"></p>
+                                <div id="flow-detail-tech" class="flex flex-wrap gap-2 mt-3"></div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="mt-6 flex flex-wrap gap-2">
-                        <span class="bg-indigo-900 text-indigo-300 text-xs font-semibold px-2.5 py-0.5 rounded">Azure Logic Apps</span>
-                        <span class="bg-pink-900 text-pink-300 text-xs font-semibold px-2.5 py-0.5 rounded">REST APIs</span>
-                        <span class="bg-gray-700 text-gray-300 text-xs font-semibold px-2.5 py-0.5 rounded">Webhooks</span>
-                        <span class="bg-orange-900 text-orange-300 text-xs font-semibold px-2.5 py-0.5 rounded">HubSpot</span>
-                        <span class="bg-purple-900 text-purple-300 text-xs font-semibold px-2.5 py-0.5 rounded">Stripe API</span>
+                        <span class="bg-indigo-900/50 text-indigo-300 text-xs font-semibold px-3 py-1 rounded-full">Azure Logic Apps</span>
+                        <span class="bg-pink-900/50 text-pink-300 text-xs font-semibold px-3 py-1 rounded-full">REST APIs</span>
+                        <span class="bg-gray-700/50 text-gray-300 text-xs font-semibold px-3 py-1 rounded-full">Webhooks</span>
+                        <span class="bg-orange-900/50 text-orange-300 text-xs font-semibold px-3 py-1 rounded-full">HubSpot</span>
+                        <span class="bg-purple-900/50 text-purple-300 text-xs font-semibold px-3 py-1 rounded-full">Stripe</span>
+                        <span class="bg-blue-900/50 text-blue-300 text-xs font-semibold px-3 py-1 rounded-full">Xero</span>
                     </div>
                 </div>
 
-                <!-- Project 2: Field Ops App -->
-                <div class="glass-card rounded-lg p-8">
-                     <h3 class="text-2xl font-bold text-white">Offline-First Field Operations App</h3>
-                    <p class="text-gray-400 mt-2">Designed a robust, offline-first Power App for engineers conducting site safety checks in low-connectivity areas. Implemented a queueing pattern (`SaveData`/`LoadData`) for reliable data synchronization with SharePoint and COINS ERP, ensuring data integrity and improving compliance reporting.</p>
-                    <div class="mt-4 flex flex-wrap gap-2">
-                        <span class="bg-blue-900 text-blue-300 text-xs font-semibold px-2.5 py-0.5 rounded">Power Apps</span>
-                        <span class="bg-gray-700 text-gray-300 text-xs font-semibold px-2.5 py-0.5 rounded">SharePoint</span>
-                        <span class="bg-green-900 text-green-300 text-xs font-semibold px-2.5 py-0.5 rounded">COINS ERP</span>
-                        <span class="bg-yellow-900 text-yellow-300 text-xs font-semibold px-2.5 py-0.5 rounded">Offline-First</span>
+                <!-- Project Cards -->
+                <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                    <div class="glass-card glass-card-hover rounded-xl p-8">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-lg accent-gradient flex items-center justify-center text-white text-lg">📱</div>
+                            <h3 class="text-xl font-bold">Offline-First Field App</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            Designed a robust Power App for engineers conducting site safety checks in low-connectivity areas. Built a queueing pattern using <code class="text-pink-400 bg-pink-900/20 px-1 rounded">SaveData</code>/<code class="text-pink-400 bg-pink-900/20 px-1 rounded">LoadData</code> for reliable data sync with SharePoint and COINS ERP.
+                        </p>
+                        <div class="flex flex-wrap gap-2 mt-5">
+                            <span class="bg-blue-900/50 text-blue-300 text-xs font-semibold px-3 py-1 rounded-full">Power Apps</span>
+                            <span class="bg-gray-700/50 text-gray-300 text-xs font-semibold px-3 py-1 rounded-full">SharePoint</span>
+                            <span class="bg-green-900/50 text-green-300 text-xs font-semibold px-3 py-1 rounded-full">COINS ERP</span>
+                            <span class="bg-yellow-900/50 text-yellow-300 text-xs font-semibold px-3 py-1 rounded-full">Offline-First</span>
+                        </div>
+                    </div>
+
+                    <div class="glass-card glass-card-hover rounded-xl p-8">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-lg accent-gradient flex items-center justify-center text-white text-lg">🔗</div>
+                            <h3 class="text-xl font-bold">Unified Booking Platform</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            Consolidated multiple siloed booking systems into a single centralised platform at Wokingham Borough Council. Reduced software licence costs, improved data visibility, and connected CRM, MRP, and payment systems through REST APIs and Azure tooling.
+                        </p>
+                        <div class="flex flex-wrap gap-2 mt-5">
+                            <span class="bg-indigo-900/50 text-indigo-300 text-xs font-semibold px-3 py-1 rounded-full">Azure APIM</span>
+                            <span class="bg-pink-900/50 text-pink-300 text-xs font-semibold px-3 py-1 rounded-full">REST APIs</span>
+                            <span class="bg-blue-900/50 text-blue-300 text-xs font-semibold px-3 py-1 rounded-full">Power Automate</span>
+                            <span class="bg-purple-900/50 text-purple-300 text-xs font-semibold px-3 py-1 rounded-full">Dynamics 365</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
+        <!-- ======================== COMPETENCIES ======================== -->
+        <section id="competencies" class="py-24 section-reveal">
+            <div class="container mx-auto px-6">
+                <h2 class="text-4xl font-bold text-center mb-16">Core <span class="accent-gradient-text">Competencies</span></h2>
 
-        <!-- Competencies Section -->
-        <section id="competencies" class="py-20 section-fade-in">
-            <h2 class="text-4xl font-bold text-center text-white mb-12">Core Competencies</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="glass-card p-6 rounded-lg">
-                    <h3 class="text-xl font-bold text-white mb-4">Integrations & APIs</h3>
-                    <ul class="space-y-2 text-gray-400">
-                        <li>Azure API Management</li>
-                        <li>REST API Design & Consumption</li>
-                        <li>Data Mapping & Transformation</li>
-                        <li>Integration Design Patterns</li>
-                    </ul>
-                </div>
-                <div class="glass-card p-6 rounded-lg">
-                    <h3 class="text-xl font-bold text-white mb-4">Cloud & Platform</h3>
-                    <ul class="space-y-2 text-gray-400">
-                        <li>Microsoft Azure (Logic Apps, Functions)</li>
-                        <li>Power Platform (Power Apps, Power Automate)</li>
-                        <li>Dataverse & SharePoint</li>
-                        <li>Dynamics 365 & HubSpot</li>
-                    </ul>
-                </div>
-                <div class="glass-card p-6 rounded-lg">
-                    <h3 class="text-xl font-bold text-white mb-4">Analysis & Documentation</h3>
-                    <ul class="space-y-2 text-gray-400">
-                        <li>Requirements Gathering & Workshops</li>
-                        <li>Process Mapping (As-Is / To-Be)</li>
-                        <li>High-Level Design Docs</li>
-                        <li>User Stories & Acceptance Criteria</li>
-                    </ul>
+                <div class="grid lg:grid-cols-2 gap-12 max-w-5xl mx-auto items-center">
+                    <!-- Radar Chart -->
+                    <div>
+                        <canvas id="radar-canvas" width="400" height="400"></canvas>
+                    </div>
+
+                    <!-- Competency Cards -->
+                    <div class="space-y-6">
+                        <div class="glass-card glass-card-hover rounded-xl p-6">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-8 h-8 rounded-lg bg-pink-500/20 flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D83E9C" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+                                </div>
+                                <h3 class="text-lg font-bold">Integrations & APIs</h3>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="text-xs bg-white/5 text-gray-300 px-3 py-1 rounded-full">Azure APIM</span>
+                                <span class="text-xs bg-white/5 text-gray-300 px-3 py-1 rounded-full">REST API Design</span>
+                                <span class="text-xs bg-white/5 text-gray-300 px-3 py-1 rounded-full">Data Mapping</span>
+                                <span class="text-xs bg-white/5 text-gray-300 px-3 py-1 rounded-full">Integration Patterns</span>
+                            </div>
+                        </div>
+                        <div class="glass-card glass-card-hover rounded-xl p-6">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#58A6FF" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                                </div>
+                                <h3 class="text-lg font-bold">Cloud & Platform</h3>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="text-xs bg-white/5 text-gray-300 px-3 py-1 rounded-full">Azure Logic Apps</span>
+                                <span class="text-xs bg-white/5 text-gray-300 px-3 py-1 rounded-full">Azure Functions</span>
+                                <span class="text-xs bg-white/5 text-gray-300 px-3 py-1 rounded-full">Power Platform</span>
+                                <span class="text-xs bg-white/5 text-gray-300 px-3 py-1 rounded-full">Dataverse</span>
+                                <span class="text-xs bg-white/5 text-gray-300 px-3 py-1 rounded-full">D365 / HubSpot</span>
+                            </div>
+                        </div>
+                        <div class="glass-card glass-card-hover rounded-xl p-6">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3FB950" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                </div>
+                                <h3 class="text-lg font-bold">Analysis & Documentation</h3>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="text-xs bg-white/5 text-gray-300 px-3 py-1 rounded-full">Requirements Workshops</span>
+                                <span class="text-xs bg-white/5 text-gray-300 px-3 py-1 rounded-full">Process Mapping</span>
+                                <span class="text-xs bg-white/5 text-gray-300 px-3 py-1 rounded-full">HLD Documents</span>
+                                <span class="text-xs bg-white/5 text-gray-300 px-3 py-1 rounded-full">User Stories & AC</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- Contact Section -->
-        <section id="contact" class="py-20 text-center section-fade-in">
-            <h2 class="text-4xl font-bold text-white">Let's Connect</h2>
-            <p class="mt-4 max-w-xl mx-auto text-lg text-gray-400">
-                I'm always open to discussing new opportunities in system integration and process improvement. Feel free to reach out.
-            </p>
-            <div class="mt-8">
-                <a href="mailto:danielattfield@icloud.com" class="accent-gradient text-white font-bold py-4 px-8 rounded-lg text-lg inline-block hover:opacity-90 transition-opacity">danielattfield@icloud.com</a>
+        <!-- ======================== CONTACT ======================== -->
+        <section id="contact" class="py-24 section-reveal">
+            <div class="container mx-auto px-6">
+                <div class="glass-card rounded-2xl p-12 max-w-3xl mx-auto text-center">
+                    <h2 class="text-4xl font-bold mb-4">Let's <span class="accent-gradient-text">Connect</span></h2>
+                    <p class="text-gray-400 text-lg mb-8 max-w-xl mx-auto">
+                        Looking for someone to untangle your systems, design integrations, or improve your business processes? Let's talk.
+                    </p>
+                    <div class="flex flex-wrap justify-center gap-4 mb-8">
+                        <a href="mailto:daniel@danielattfield.co.uk" class="accent-gradient text-white font-semibold py-3 px-8 rounded-lg text-lg hover:opacity-90 transition-opacity flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                            Email Me
+                        </a>
+                        <a href="https://linkedin.com/in/danattfield" target="_blank" class="glass-card glass-card-hover text-white font-semibold py-3 px-8 rounded-lg text-lg flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                            LinkedIn
+                        </a>
+                    </div>
+                    <p class="text-gray-500 text-sm">📍 Bristol, UK &nbsp;•&nbsp; 📞 07711 210603</p>
+                </div>
             </div>
-             <p class="mt-4 text-gray-500">Bristol, UK | 07711 210603</p>
         </section>
-
     </main>
-    
-    <!-- Share Toast Notification -->
-    <div id="toast" class="fixed bottom-10 right-10 bg-green-500 text-white py-2 px-4 rounded-lg shadow-lg opacity-0 transform translate-y-5 transition-all duration-300">
+
+    <!-- Footer -->
+    <footer class="border-t border-white/5 py-8">
+        <div class="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
+            <p>© 2025 Daniel Attfield. Built with curiosity and too many API calls.</p>
+            <button id="share-button" class="mt-4 md:mt-0 flex items-center gap-2 hover:text-white transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                Share this page
+            </button>
+        </div>
+    </footer>
+
+    <!-- Toast -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-green-500 text-white py-3 px-5 rounded-lg shadow-lg opacity-0 transform translate-y-4 transition-all duration-300 z-50 flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
         Link copied to clipboard!
     </div>
 
-
     <script>
-        // --- Experience Data ---
-        const experienceData = [
-            {
-                role: 'Business Systems Analyst',
-                company: 'ATFI (Consultancy)',
-                period: 'Feb 2025 - Present',
-                details: [
-                    'Building Power Platform solutions that link site operations with office systems.',
-                    'Designed an offline safety-check app that syncs data to SharePoint and COINS ERP.',
-                    'Created workflows to reduce manual reporting and improve visibility of field data.'
-                ]
-            },
-            {
-                role: 'Information Technology Business Analyst',
-                company: 'Tepeo Ltd',
-                period: 'Oct 2023 - Jan 2025',
-                details: [
-                    'Delivered system integrations using Azure API Management, REST APIs, and Power Automate.',
-                    'Produced design packs, data maps, and process flows to guide developers and suppliers.',
-                    'Presented technical designs to management and secured sign-off from governance boards.'
-                ]
-            },
-            {
-                role: 'Business Systems Analyst',
-                company: 'Wokingham Borough Council',
-                period: 'Mar 2022 - May 2023',
-                details: [
-                    'Led projects linking CRM, MRP, and payment systems through REST APIs and Azure tools.',
-                    'Combined several booking systems into a central platform, cutting licence costs.',
-                    'Built Power Apps and automation flows to streamline internal processes.'
-                ]
-            }
-        ];
+    // ==============================
+    //  DATA
+    // ==============================
+    const experienceData = [
+        {
+            role: 'Business Systems Analyst',
+            company: 'ATFI (Consultancy)',
+            period: 'Feb 2025 — Present',
+            type: 'Contract',
+            details: [
+                'Building Power Platform solutions linking site operations with office systems.',
+                'Designed an offline safety-check app that syncs data to SharePoint and COINS ERP.',
+                'Created workflows to reduce manual reporting and improve visibility of field data.'
+            ]
+        },
+        {
+            role: 'IT Business Analyst',
+            company: 'Tepeo Ltd',
+            period: 'Oct 2023 — Jan 2025',
+            type: 'Permanent',
+            details: [
+                'Delivered system integrations using Azure API Management, REST APIs, and Power Automate.',
+                'Produced design packs, data maps, and process flows to guide developers and suppliers.',
+                'Presented technical designs to management and secured sign-off from governance boards.'
+            ]
+        },
+        {
+            role: 'Business Systems Analyst',
+            company: 'Wokingham Borough Council',
+            period: 'Mar 2022 — May 2023',
+            type: 'Contract',
+            details: [
+                'Led projects linking CRM, MRP, and payment systems through REST APIs and Azure tools.',
+                'Combined several booking systems into a central platform, cutting licence costs.',
+                'Built Power Apps and automation flows to streamline internal processes.'
+            ]
+        }
+    ];
 
-        // --- Timeline Generation ---
-        const timelineContainer = document.getElementById('timeline-container');
-        experienceData.forEach(job => {
-            const item = document.createElement('div');
-            item.className = 'timeline-item relative pl-8';
-            item.innerHTML = `
-                <div class="glass-card p-6 rounded-lg">
-                    <p class="text-sm text-gray-400">${job.period}</p>
-                    <h3 class="text-xl font-bold text-white mt-1">${job.role}</h3>
-                    <h4 class="text-lg font-semibold text-pink-400">${job.company}</h4>
-                    <ul class="mt-3 space-y-2 text-gray-300 list-disc list-inside">
-                        ${job.details.map(d => `<li>${d}</li>`).join('')}
-                    </ul>
-                </div>
-            `;
-            timelineContainer.appendChild(item);
+    const flowSteps = [
+        {
+            icon: '🟠',
+            label: 'HubSpot',
+            title: 'Deal Won → Webhook Fires',
+            desc: 'When a sales rep marks a deal as "Won" in HubSpot, a webhook fires immediately, sending the full customer and deal payload to a secure Azure endpoint.',
+            tech: ['HubSpot Workflows', 'Webhooks', 'JSON Payload']
+        },
+        {
+            icon: '☁️',
+            label: 'Azure',
+            title: 'API Gateway & Orchestration',
+            desc: 'Azure API Management authenticates and validates the incoming request, then routes it to an Azure Logic App that orchestrates the entire downstream workflow.',
+            tech: ['Azure APIM', 'Logic Apps', 'OAuth 2.0']
+        },
+        {
+            icon: '📦',
+            label: 'ERP',
+            title: 'Customer & Project Creation',
+            desc: 'The Logic App transforms HubSpot data to match the ERP schema and creates a new customer record and project via the ERP\'s REST API.',
+            tech: ['REST API', 'Data Mapping', 'Schema Transform']
+        },
+        {
+            icon: '💳',
+            label: 'Stripe',
+            title: 'Invoice & Payment Link',
+            desc: 'On successful ERP entry, the Logic App calls the Stripe API to generate an invoice and a secure payment link, which is emailed to the customer automatically.',
+            tech: ['Stripe API', 'Payment Links', 'Email Triggers']
+        },
+        {
+            icon: '🧾',
+            label: 'Xero',
+            title: 'Financial Reconciliation',
+            desc: 'A Stripe webhook on "payment_successful" triggers a second Logic App to create a matching sales invoice in Xero, closing the financial loop.',
+            tech: ['Xero API', 'Webhook Listener', 'Reconciliation']
+        },
+        {
+            icon: '🔔',
+            label: 'Teams',
+            title: 'Stakeholder Notification',
+            desc: 'Real-time status updates are posted to a dedicated Microsoft Teams channel at every stage, giving full visibility to stakeholders without them checking multiple systems.',
+            tech: ['Teams Connector', 'Adaptive Cards', 'Status Tracking']
+        }
+    ];
+
+    const tickerEvents = [
+        { text: 'POST /api/deals/webhook → 201 Created', color: '#3FB950', system: 'HubSpot' },
+        { text: 'Logic App: OrderPipeline triggered', color: '#58A6FF', system: 'Azure' },
+        { text: 'PUT /customers/new → ERP sync complete', color: '#D83E9C', system: 'ERP' },
+        { text: 'Stripe Invoice INV-2024-0847 generated', color: '#A371F7', system: 'Stripe' },
+        { text: 'Payment £2,400.00 received — reconciling', color: '#3FB950', system: 'Xero' },
+        { text: 'Teams: "New deal closed — Acme Corp"', color: '#58A6FF', system: 'Teams' },
+        { text: 'GET /api/field-reports?status=pending', color: '#D83E9C', system: 'Power Apps' },
+        { text: 'SaveData() → 12 records queued offline', color: '#F0883E', system: 'Field App' },
+        { text: 'SharePoint: Safety report uploaded', color: '#3FB950', system: 'SharePoint' },
+        { text: 'PATCH /projects/PRJ-441 → status: active', color: '#A371F7', system: 'COINS' },
+        { text: 'Power Automate: Approval flow triggered', color: '#58A6FF', system: 'M365' },
+        { text: 'Data transform: HubSpot → ERP schema mapped', color: '#D83E9C', system: 'Azure' },
+    ];
+
+    // ==============================
+    //  NETWORK CANVAS (Hero background)
+    // ==============================
+    const canvas = document.getElementById('network-canvas');
+    const ctx = canvas.getContext('2d');
+    let nodes = [];
+    const NODE_COUNT = 50;
+    const CONNECTION_DIST = 150;
+
+    function resizeCanvas() {
+        canvas.width = canvas.parentElement.offsetWidth;
+        canvas.height = canvas.parentElement.offsetHeight;
+    }
+
+    function initNodes() {
+        nodes = [];
+        for (let i = 0; i < NODE_COUNT; i++) {
+            nodes.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                vx: (Math.random() - 0.5) * 0.5,
+                vy: (Math.random() - 0.5) * 0.5,
+                r: Math.random() * 2 + 1
+            });
+        }
+    }
+
+    function drawNetwork() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Connections
+        for (let i = 0; i < nodes.length; i++) {
+            for (let j = i + 1; j < nodes.length; j++) {
+                const dx = nodes[i].x - nodes[j].x;
+                const dy = nodes[i].y - nodes[j].y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < CONNECTION_DIST) {
+                    const opacity = (1 - dist / CONNECTION_DIST) * 0.3;
+                    ctx.strokeStyle = `rgba(216, 62, 156, ${opacity})`;
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(nodes[i].x, nodes[i].y);
+                    ctx.lineTo(nodes[j].x, nodes[j].y);
+                    ctx.stroke();
+                }
+            }
+        }
+
+        // Nodes
+        nodes.forEach(n => {
+            ctx.fillStyle = 'rgba(142, 95, 168, 0.6)';
+            ctx.beginPath();
+            ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+            ctx.fill();
+
+            n.x += n.vx;
+            n.y += n.vy;
+            if (n.x < 0 || n.x > canvas.width) n.vx *= -1;
+            if (n.y < 0 || n.y > canvas.height) n.vy *= -1;
         });
 
-        // --- Fade-in on Scroll ---
-        const sections = document.querySelectorAll('.section-fade-in');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, { threshold: 0.1 });
-        sections.forEach(section => observer.observe(section));
-        
-        // --- Share Button Functionality ---
-        const shareButton = document.getElementById('share-button');
-        const toast = document.getElementById('toast');
-        shareButton.addEventListener('click', () => {
-            const textToCopy = window.location.href;
-            const textArea = document.createElement("textarea");
-            textArea.style.position = "fixed";
-            textArea.style.top = "0";
-            textArea.style.left = "0";
-            textArea.style.width = "1px";
-            textArea.style.height = "1px";
-            textArea.style.background = "transparent";
-            textArea.value = textToCopy;
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-            try {
-                document.execCommand('copy');
-                toast.classList.remove('opacity-0', 'translate-y-5');
+        requestAnimationFrame(drawNetwork);
+    }
+
+    window.addEventListener('resize', () => { resizeCanvas(); initNodes(); });
+    resizeCanvas();
+    initNodes();
+    drawNetwork();
+
+    // ==============================
+    //  TERMINAL TYPEWRITER
+    // ==============================
+    const terminalLines = [
+        { type: 'prompt', text: '$ whoami' },
+        { type: 'output', text: 'Daniel Attfield — Technical Business Analyst' },
+        { type: 'prompt', text: '$ cat skills.json' },
+        { type: 'output', text: '{ "focus": "System Integration & Process Automation" }' },
+        { type: 'prompt', text: '$ curl -X GET /api/systems/connected' },
+        { type: 'highlight', text: '→ HubSpot ⟷ Azure ⟷ ERP ⟷ Stripe ⟷ Xero ✓' },
+        { type: 'prompt', text: '$ echo $STATUS' },
+        { type: 'output', text: 'Ready for new challenges.' },
+    ];
+
+    const terminalOutput = document.getElementById('terminal-output');
+    let lineIndex = 0;
+    let charIndex = 0;
+    let currentLineEl = null;
+
+    function typeTerminal() {
+        if (lineIndex >= terminalLines.length) return;
+
+        const line = terminalLines[lineIndex];
+
+        if (charIndex === 0) {
+            currentLineEl = document.createElement('div');
+            currentLineEl.className = `terminal-${line.type}`;
+            terminalOutput.appendChild(currentLineEl);
+        }
+
+        if (charIndex < line.text.length) {
+            currentLineEl.textContent = line.text.substring(0, charIndex + 1);
+            charIndex++;
+
+            // Remove old cursor, add new one
+            const existingCursor = terminalOutput.querySelector('.terminal-cursor');
+            if (existingCursor) existingCursor.remove();
+            const cursor = document.createElement('span');
+            cursor.className = 'terminal-cursor';
+            currentLineEl.appendChild(cursor);
+
+            const speed = line.type === 'prompt' ? 60 : 25;
+            setTimeout(typeTerminal, speed);
+        } else {
+            const existingCursor = terminalOutput.querySelector('.terminal-cursor');
+            if (existingCursor) existingCursor.remove();
+
+            lineIndex++;
+            charIndex = 0;
+            setTimeout(typeTerminal, line.type === 'prompt' ? 500 : 800);
+        }
+    }
+
+    setTimeout(typeTerminal, 600);
+
+    // ==============================
+    //  TICKER
+    // ==============================
+    const tickerTrack = document.getElementById('ticker-track');
+    // Duplicate for infinite scroll
+    const allEvents = [...tickerEvents, ...tickerEvents];
+    allEvents.forEach(evt => {
+        const item = document.createElement('div');
+        item.className = 'ticker-item';
+        item.innerHTML = `
+            <span class="ticker-dot" style="background:${evt.color}"></span>
+            <span class="text-gray-500">${evt.system}</span>
+            <span class="mono text-gray-300">${evt.text}</span>
+        `;
+        tickerTrack.appendChild(item);
+    });
+
+    // ==============================
+    //  TIMELINE
+    // ==============================
+    const timelineContainer = document.getElementById('timeline-container');
+    experienceData.forEach((job, i) => {
+        const entry = document.createElement('div');
+        entry.className = 'timeline-entry relative pl-14 pb-12';
+        entry.innerHTML = `
+            <div class="timeline-node"></div>
+            <div class="glass-card glass-card-hover rounded-xl p-6">
+                <div class="flex flex-wrap items-center gap-3 mb-2">
+                    <span class="text-xs mono text-gray-500">${job.period}</span>
+                    <span class="text-xs px-2 py-0.5 rounded-full ${job.type === 'Contract' ? 'bg-yellow-900/50 text-yellow-300' : 'bg-green-900/50 text-green-300'}">${job.type}</span>
+                </div>
+                <h3 class="text-xl font-bold">${job.role}</h3>
+                <h4 class="text-lg accent-gradient-text font-semibold">${job.company}</h4>
+                <ul class="mt-3 space-y-2 text-gray-400 text-sm">
+                    ${job.details.map(d => `<li class="flex items-start gap-2"><span class="text-pink-500 mt-1">▸</span>${d}</li>`).join('')}
+                </ul>
+            </div>
+        `;
+        timelineContainer.appendChild(entry);
+    });
+
+    // ==============================
+    //  INTERACTIVE FLOW BUILDER
+    // ==============================
+    const flowContainer = document.getElementById('flow-steps');
+    const flowDetail = document.getElementById('flow-detail');
+    const flowDetailIcon = document.getElementById('flow-detail-icon');
+    const flowDetailTitle = document.getElementById('flow-detail-title');
+    const flowDetailDesc = document.getElementById('flow-detail-desc');
+    const flowDetailTech = document.getElementById('flow-detail-tech');
+    let activeStep = -1;
+
+    function renderFlow() {
+        flowContainer.innerHTML = '';
+        flowSteps.forEach((step, i) => {
+            // Step node
+            const stepEl = document.createElement('div');
+            stepEl.className = `flow-step flex flex-col items-center flex-shrink-0 ${i <= activeStep ? (i === activeStep ? 'active' : 'completed') : ''}`;
+            stepEl.style.cssText = 'min-width: 70px;';
+            stepEl.innerHTML = `
+                <div class="w-14 h-14 rounded-xl border-2 ${i <= activeStep ? (i === activeStep ? 'border-pink-500 bg-pink-500/10' : 'border-green-500 bg-green-500/10') : 'border-gray-700 bg-gray-800/50'} flex items-center justify-center text-xl transition-all duration-300">
+                    ${i < activeStep ? '✓' : step.icon}
+                </div>
+                <span class="text-xs mt-2 ${i <= activeStep ? 'text-white' : 'text-gray-500'} transition-colors">${step.label}</span>
+            `;
+            stepEl.addEventListener('click', () => activateStep(i));
+            flowContainer.appendChild(stepEl);
+
+            // Connector
+            if (i < flowSteps.length - 1) {
+                const connector = document.createElement('div');
+                connector.className = `flow-connector self-center mt-[-12px] ${i < activeStep ? 'completed' : (i === activeStep ? 'active' : '')}`;
+                connector.id = `connector-${i}`;
+                flowContainer.appendChild(connector);
+            }
+        });
+    }
+
+    function activateStep(index) {
+        activeStep = index;
+        const step = flowSteps[index];
+
+        flowDetailIcon.textContent = step.icon;
+        flowDetailTitle.textContent = step.title;
+        flowDetailDesc.textContent = step.desc;
+        flowDetailTech.innerHTML = step.tech.map(t => `<span class="text-xs bg-white/5 text-gray-300 px-3 py-1 rounded-full">${t}</span>`).join('');
+
+        flowDetail.classList.add('open');
+        renderFlow();
+
+        // Animate data packet on the active connector
+        if (index > 0) {
+            const connector = document.getElementById(`connector-${index - 1}`);
+            if (connector) {
+                const existing = connector.querySelector('.data-packet');
+                if (existing) existing.remove();
+                const packet = document.createElement('div');
+                packet.className = 'data-packet';
+                connector.appendChild(packet);
+            }
+        }
+    }
+
+    renderFlow();
+
+    // ==============================
+    //  RADAR CHART
+    // ==============================
+    function drawRadar() {
+        const radarCanvas = document.getElementById('radar-canvas');
+        const rCtx = radarCanvas.getContext('2d');
+        const size = radarCanvas.width;
+        const center = size / 2;
+        const radius = size * 0.38;
+
+        const labels = ['API Integration', 'Azure Cloud', 'Power Platform', 'Process Design', 'Documentation', 'Stakeholder Mgmt'];
+        const values = [0.92, 0.85, 0.88, 0.90, 0.85, 0.82];
+        const sides = labels.length;
+
+        rCtx.clearRect(0, 0, size, size);
+
+        // Draw grid rings
+        for (let ring = 1; ring <= 4; ring++) {
+            const r = (radius / 4) * ring;
+            rCtx.beginPath();
+            for (let i = 0; i <= sides; i++) {
+                const angle = (Math.PI * 2 * i) / sides - Math.PI / 2;
+                const x = center + r * Math.cos(angle);
+                const y = center + r * Math.sin(angle);
+                if (i === 0) rCtx.moveTo(x, y);
+                else rCtx.lineTo(x, y);
+            }
+            rCtx.strokeStyle = 'rgba(255,255,255,0.06)';
+            rCtx.lineWidth = 1;
+            rCtx.stroke();
+        }
+
+        // Draw axes
+        for (let i = 0; i < sides; i++) {
+            const angle = (Math.PI * 2 * i) / sides - Math.PI / 2;
+            rCtx.beginPath();
+            rCtx.moveTo(center, center);
+            rCtx.lineTo(center + radius * Math.cos(angle), center + radius * Math.sin(angle));
+            rCtx.strokeStyle = 'rgba(255,255,255,0.08)';
+            rCtx.lineWidth = 1;
+            rCtx.stroke();
+        }
+
+        // Draw data polygon
+        rCtx.beginPath();
+        values.forEach((val, i) => {
+            const angle = (Math.PI * 2 * i) / sides - Math.PI / 2;
+            const x = center + radius * val * Math.cos(angle);
+            const y = center + radius * val * Math.sin(angle);
+            if (i === 0) rCtx.moveTo(x, y);
+            else rCtx.lineTo(x, y);
+        });
+        rCtx.closePath();
+
+        const gradient = rCtx.createLinearGradient(0, 0, size, size);
+        gradient.addColorStop(0, 'rgba(216, 62, 156, 0.25)');
+        gradient.addColorStop(1, 'rgba(142, 95, 168, 0.25)');
+        rCtx.fillStyle = gradient;
+        rCtx.fill();
+
+        rCtx.strokeStyle = 'rgba(216, 62, 156, 0.8)';
+        rCtx.lineWidth = 2;
+        rCtx.stroke();
+
+        // Draw data points
+        values.forEach((val, i) => {
+            const angle = (Math.PI * 2 * i) / sides - Math.PI / 2;
+            const x = center + radius * val * Math.cos(angle);
+            const y = center + radius * val * Math.sin(angle);
+            rCtx.beginPath();
+            rCtx.arc(x, y, 4, 0, Math.PI * 2);
+            rCtx.fillStyle = '#D83E9C';
+            rCtx.fill();
+            rCtx.strokeStyle = '#0D1117';
+            rCtx.lineWidth = 2;
+            rCtx.stroke();
+        });
+
+        // Draw labels
+        rCtx.font = '12px Inter, sans-serif';
+        rCtx.fillStyle = '#8B949E';
+        rCtx.textAlign = 'center';
+        labels.forEach((label, i) => {
+            const angle = (Math.PI * 2 * i) / sides - Math.PI / 2;
+            const labelR = radius + 28;
+            let x = center + labelR * Math.cos(angle);
+            let y = center + labelR * Math.sin(angle);
+
+            // Adjust alignment based on position
+            if (Math.abs(Math.cos(angle)) > 0.8) {
+                rCtx.textAlign = Math.cos(angle) > 0 ? 'left' : 'right';
+                x += Math.cos(angle) > 0 ? -10 : 10;
+            } else {
+                rCtx.textAlign = 'center';
+            }
+
+            rCtx.fillText(label, x, y + 4);
+        });
+    }
+
+    // Draw radar when section is visible
+    const radarObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                drawRadar();
+                radarObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.3 });
+    radarObserver.observe(document.getElementById('radar-canvas'));
+
+    // ==============================
+    //  STAT COUNTERS
+    // ==============================
+    function animateCounters() {
+        document.querySelectorAll('.stat-number').forEach(el => {
+            const target = parseInt(el.dataset.target);
+            const suffix = el.dataset.suffix || '';
+            const duration = 2000;
+            const start = performance.now();
+
+            function update(now) {
+                const progress = Math.min((now - start) / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+                const current = Math.round(target * eased);
+                el.textContent = current + suffix;
+                if (progress < 1) requestAnimationFrame(update);
+            }
+            requestAnimationFrame(update);
+        });
+    }
+
+    const statObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                animateCounters();
+                statObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.3 });
+    statObserver.observe(document.querySelector('#about'));
+
+    // ==============================
+    //  SECTION REVEAL ON SCROLL
+    // ==============================
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.section-reveal').forEach(s => revealObserver.observe(s));
+
+    // ==============================
+    //  MOBILE MENU
+    // ==============================
+    const mobileToggle = document.getElementById('mobile-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const mobileClose = document.getElementById('mobile-close');
+    const mobileOverlay = document.getElementById('mobile-overlay');
+    const mobileLinks = document.querySelectorAll('.mobile-link');
+
+    function openMenu() { mobileMenu.classList.add('open'); mobileOverlay.classList.remove('hidden'); }
+    function closeMenu() { mobileMenu.classList.remove('open'); mobileOverlay.classList.add('hidden'); }
+
+    mobileToggle.addEventListener('click', openMenu);
+    mobileClose.addEventListener('click', closeMenu);
+    mobileOverlay.addEventListener('click', closeMenu);
+    mobileLinks.forEach(link => link.addEventListener('click', closeMenu));
+
+    // ==============================
+    //  SHARE BUTTON
+    // ==============================
+    document.getElementById('share-button').addEventListener('click', () => {
+        if (navigator.share) {
+            navigator.share({ title: 'Daniel Attfield — Technical BA', url: window.location.href });
+        } else {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                const toast = document.getElementById('toast');
+                toast.classList.remove('opacity-0', 'translate-y-4');
                 toast.classList.add('opacity-100', 'translate-y-0');
                 setTimeout(() => {
                     toast.classList.remove('opacity-100', 'translate-y-0');
-                    toast.classList.add('opacity-0', 'translate-y-5');
-                }, 2000);
-            } catch (err) {
-                console.error('Failed to copy text: ', err);
-            }
-            document.body.removeChild(textArea);
-        });
+                    toast.classList.add('opacity-0', 'translate-y-4');
+                }, 2500);
+            });
+        }
+    });
     </script>
-
 </body>
 </html>
-
