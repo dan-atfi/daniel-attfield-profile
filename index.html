@@ -4,15 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daniel Attfield — Technical Business Analyst</title>
+    <meta name="description" content="Technical Business Analyst specialising in system integration, process automation, Azure, and Power Platform. Based in Bristol, UK.">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bg: { primary: '#0B0F19', secondary: '#111827', tertiary: '#1a2035' },
+                        accent: { pink: '#D83E9C', purple: '#8E5FA8', blue: '#58A6FF', green: '#3FB950', orange: '#F0883E', cyan: '#79C0FF' },
+                        surface: { '1': 'rgba(17, 24, 39, 0.7)', '2': 'rgba(26, 32, 53, 0.6)' }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Space Grotesk', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
     <style>
+        /* ============================================
+           ROOT VARIABLES & THEME
+           ============================================ */
         :root {
-            --bg-primary: #0D1117;
-            --bg-secondary: #161B22;
-            --bg-card: rgba(22, 27, 34, 0.6);
+            --bg-primary: #0B0F19;
+            --bg-secondary: #111827;
+            --bg-tertiary: #1a2035;
             --text-primary: #E6EDF3;
             --text-secondary: #8B949E;
             --text-muted: #484F58;
@@ -20,7 +42,24 @@
             --accent-purple: #8E5FA8;
             --accent-blue: #58A6FF;
             --accent-green: #3FB950;
-            --border-color: rgba(255, 255, 255, 0.08);
+            --accent-orange: #F0883E;
+            --accent-cyan: #79C0FF;
+            --border-color: rgba(255, 255, 255, 0.06);
+            --glass-bg: rgba(17, 24, 39, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #F8FAFC;
+            --bg-secondary: #FFFFFF;
+            --bg-tertiary: #F1F5F9;
+            --text-primary: #0F172A;
+            --text-secondary: #475569;
+            --text-muted: #94A3B8;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(0, 0, 0, 0.06);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -30,114 +69,217 @@
             background-color: var(--bg-primary);
             color: var(--text-secondary);
             overflow-x: hidden;
+            transition: background-color 0.5s ease, color 0.5s ease;
         }
 
-        h1, h2, h3, h4 { font-family: 'Space Grotesk', sans-serif; color: var(--text-primary); }
-
-        .mono { font-family: 'JetBrains Mono', monospace; }
-
-        /* Glass Card */
-        .glass-card {
-            background: var(--bg-card);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--border-color);
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: var(--noise);
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.35;
         }
 
-        .glass-card-hover {
-            transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+        h1, h2, h3, h4, h5 {
+            font-family: 'Space Grotesk', sans-serif;
+            color: var(--text-primary);
+            transition: color 0.5s ease;
         }
-        .glass-card-hover:hover {
-            border-color: rgba(216, 62, 156, 0.3);
+
+        ::selection { background: rgba(216, 62, 156, 0.3); color: var(--text-primary); }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: #30363D; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #484F58; }
+
+        /* ============================================
+           READING PROGRESS BAR
+           ============================================ */
+        #reading-progress {
+            position: fixed; top: 0; left: 0;
+            height: 3px; width: 0%;
+            background: linear-gradient(90deg, var(--accent-pink), var(--accent-purple), var(--accent-blue));
+            z-index: 9998;
+            transition: width 0.1s linear;
+        }
+
+        /* ============================================
+           GLASS CARD
+           ============================================ */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px) saturate(1.2);
+            -webkit-backdrop-filter: blur(16px) saturate(1.2);
+            border: 1px solid var(--glass-border);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-hover:hover {
+            border-color: rgba(216, 62, 156, 0.25);
             transform: translateY(-4px);
-            box-shadow: 0 8px 30px rgba(216, 62, 156, 0.1);
+            box-shadow: 0 12px 40px rgba(216, 62, 156, 0.08), 0 0 0 1px rgba(216, 62, 156, 0.1);
         }
 
-        /* Gradient utilities */
-        .accent-gradient { background: linear-gradient(135deg, #D83E9C, #8E5FA8); }
-        .accent-gradient-text {
-            background: linear-gradient(135deg, #D83E9C, #8E5FA8);
+        /* ============================================
+           3D TILT CARD
+           ============================================ */
+        .tilt-card {
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            transition: transform 0.1s ease;
+        }
+        .tilt-card-inner {
+            transform: translateZ(0);
+            transition: transform 0.4s ease;
+        }
+        .tilt-card:hover .tilt-card-inner {
+            transform: translateZ(20px);
+        }
+        .tilt-card .tilt-shine {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: inherit;
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255,255,255,0.06), transparent 60%);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        /* ============================================
+           GRADIENT UTILITIES
+           ============================================ */
+        .gradient-text {
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
+        .gradient-bg { background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple)); }
+        .gradient-bg-blue { background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan)); }
+        .gradient-border {
+            position: relative;
+        }
+        .gradient-border::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: inherit;
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        .gradient-border:hover::before { opacity: 1; }
 
-        /* Network Canvas */
-        #network-canvas {
+        /* ============================================
+           ANIMATED MESH GRADIENT BACKGROUND
+           ============================================ */
+        .mesh-gradient {
+            position: absolute;
+            width: 100%; height: 100%;
+            top: 0; left: 0;
+            overflow: hidden;
+            z-index: 0;
+        }
+        .mesh-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            animation: float-blob 20s ease-in-out infinite;
+        }
+        .mesh-blob:nth-child(1) { width: 500px; height: 500px; background: var(--accent-pink); top: -10%; left: -5%; animation-delay: 0s; }
+        .mesh-blob:nth-child(2) { width: 400px; height: 400px; background: var(--accent-purple); top: 30%; right: -10%; animation-delay: -7s; }
+        .mesh-blob:nth-child(3) { width: 350px; height: 350px; background: var(--accent-blue); bottom: -5%; left: 30%; animation-delay: -14s; }
+
+        @keyframes float-blob {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(30px, -40px) scale(1.1); }
+            50% { transform: translate(-20px, 20px) scale(0.95); }
+            75% { transform: translate(40px, 30px) scale(1.05); }
+        }
+
+        /* ============================================
+           PARTICLE CANVAS
+           ============================================ */
+        #particle-canvas {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            z-index: 0;
-            opacity: 0.4;
+            z-index: 1;
         }
 
-        /* Terminal */
+        /* ============================================
+           MATRIX RAIN (Easter Egg)
+           ============================================ */
+        #matrix-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 9990;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        #matrix-canvas.active { opacity: 0.12; }
+
+        /* ============================================
+           TERMINAL
+           ============================================ */
         .terminal {
-            background: #0a0e14;
-            border: 1px solid #1e2a3a;
+            background: #080C14;
+            border: 1px solid rgba(255,255,255,0.06);
             border-radius: 12px;
             overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
         }
-        .terminal-header {
-            background: #151d2b;
-            padding: 10px 16px;
+        .terminal-bar {
+            background: linear-gradient(180deg, #1a1f2e, #141925);
+            padding: 12px 16px;
             display: flex;
             align-items: center;
             gap: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
         }
-        .terminal-dot {
-            width: 12px; height: 12px;
-            border-radius: 50%;
-        }
-        .terminal-body {
-            padding: 20px;
-            min-height: 160px;
-        }
-        .terminal-cursor {
+        .terminal-dot { width: 12px; height: 12px; border-radius: 50%; }
+        .terminal-body { padding: 20px 24px; min-height: 180px; font-size: 0.85rem; line-height: 1.8; }
+        .t-prompt { color: var(--accent-green); }
+        .t-cmd { color: var(--text-primary); }
+        .t-out { color: var(--text-secondary); }
+        .t-hl { color: var(--accent-pink); }
+        .t-blue { color: var(--accent-blue); }
+        .t-cursor {
             display: inline-block;
-            width: 10px;
-            height: 1.1em;
+            width: 8px; height: 1.15em;
             background: var(--accent-pink);
-            animation: blink 1s step-end infinite;
+            animation: cursor-blink 1s step-end infinite;
             vertical-align: text-bottom;
             margin-left: 2px;
         }
-        @keyframes blink { 50% { opacity: 0; } }
+        @keyframes cursor-blink { 50% { opacity: 0; } }
 
-        .terminal-prompt { color: var(--accent-green); }
-        .terminal-command { color: var(--text-primary); }
-        .terminal-output { color: var(--text-secondary); }
-        .terminal-highlight { color: var(--accent-pink); }
-
-        /* Integration Ticker */
-        .ticker-wrapper {
+        /* ============================================
+           TICKER
+           ============================================ */
+        .ticker-wrap {
             overflow: hidden;
             white-space: nowrap;
             position: relative;
+            mask-image: linear-gradient(90deg, transparent, black 5%, black 95%, transparent);
+            -webkit-mask-image: linear-gradient(90deg, transparent, black 5%, black 95%, transparent);
         }
-        .ticker-wrapper::before,
-        .ticker-wrapper::after {
-            content: '';
-            position: absolute;
-            top: 0; bottom: 0;
-            width: 80px;
-            z-index: 2;
-            pointer-events: none;
-        }
-        .ticker-wrapper::before { left: 0; background: linear-gradient(90deg, var(--bg-primary), transparent); }
-        .ticker-wrapper::after { right: 0; background: linear-gradient(-90deg, var(--bg-primary), transparent); }
-
         .ticker-track {
             display: inline-flex;
-            animation: ticker-scroll 40s linear infinite;
-            gap: 24px;
+            gap: 20px;
+            animation: ticker 50s linear infinite;
         }
         .ticker-track:hover { animation-play-state: paused; }
-
-        @keyframes ticker-scroll {
+        @keyframes ticker {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
         }
-
         .ticker-item {
             display: inline-flex;
             align-items: center;
@@ -146,9 +288,11 @@
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
             border-radius: 999px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             flex-shrink: 0;
+            transition: border-color 0.3s;
         }
+        .ticker-item:hover { border-color: var(--accent-pink); }
         .ticker-dot {
             width: 6px; height: 6px;
             border-radius: 50%;
@@ -156,377 +300,904 @@
         }
         @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-        /* Flow Builder */
-        .flow-step {
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
+        /* ============================================
+           AVAILABILITY STATUS
+           ============================================ */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            background: rgba(63, 185, 80, 0.1);
+            border: 1px solid rgba(63, 185, 80, 0.2);
+            color: var(--accent-green);
         }
-        .flow-step.active {
-            border-color: var(--accent-pink);
-            box-shadow: 0 0 20px rgba(216, 62, 156, 0.2);
-        }
-        .flow-step.completed {
-            border-color: var(--accent-green);
-        }
-        .flow-connector {
-            height: 3px;
-            background: var(--text-muted);
-            transition: background 0.6s;
-            flex-grow: 1;
-            min-width: 20px;
+        .status-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--accent-green);
             position: relative;
         }
-        .flow-connector.active {
-            background: linear-gradient(90deg, var(--accent-green), var(--accent-pink));
-        }
-        .flow-connector.completed {
-            background: var(--accent-green);
-        }
-        .data-packet {
-            position: absolute;
-            width: 10px; height: 10px;
-            background: var(--accent-pink);
-            border-radius: 50%;
-            top: -4px;
-            animation: packet-move 1s ease-in-out forwards;
-            box-shadow: 0 0 10px var(--accent-pink);
-        }
-        @keyframes packet-move {
-            0% { left: 0; opacity: 1; }
-            100% { left: calc(100% - 10px); opacity: 1; }
-        }
-
-        /* Radar Chart */
-        #radar-canvas {
-            max-width: 400px;
-            margin: 0 auto;
-        }
-
-        /* Stats counter */
-        .stat-number {
-            font-size: 3rem;
-            font-weight: 700;
-            font-family: 'Space Grotesk', sans-serif;
-            line-height: 1;
-        }
-
-        /* Section animations */
-        .section-reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.7s ease, transform 0.7s ease;
-        }
-        .section-reveal.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Timeline */
-        .timeline-container { position: relative; }
-        .timeline-container::before {
+        .status-dot::after {
             content: '';
             position: absolute;
-            left: 20px;
-            top: 0; bottom: 0;
+            inset: -3px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-green);
+            animation: status-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+        @keyframes status-ping {
+            0% { transform: scale(1); opacity: 0.6; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+
+        /* ============================================
+           SECTION REVEALS
+           ============================================ */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+        .reveal-delay-4 { transition-delay: 0.4s; }
+        .reveal-delay-5 { transition-delay: 0.5s; }
+
+        /* Stagger children */
+        .stagger-children > * {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .stagger-children.visible > *:nth-child(1) { transition-delay: 0.05s; opacity: 1; transform: translateY(0); }
+        .stagger-children.visible > *:nth-child(2) { transition-delay: 0.1s; opacity: 1; transform: translateY(0); }
+        .stagger-children.visible > *:nth-child(3) { transition-delay: 0.15s; opacity: 1; transform: translateY(0); }
+        .stagger-children.visible > *:nth-child(4) { transition-delay: 0.2s; opacity: 1; transform: translateY(0); }
+        .stagger-children.visible > *:nth-child(5) { transition-delay: 0.25s; opacity: 1; transform: translateY(0); }
+        .stagger-children.visible > *:nth-child(6) { transition-delay: 0.3s; opacity: 1; transform: translateY(0); }
+
+        /* ============================================
+           TIMELINE
+           ============================================ */
+        .timeline { position: relative; }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 20px; top: 0; bottom: 0;
             width: 2px;
             background: linear-gradient(to bottom, var(--accent-pink), var(--accent-purple), transparent);
         }
         .timeline-node {
             position: absolute;
-            left: 12px;
-            top: 28px;
+            left: 12px; top: 28px;
             width: 18px; height: 18px;
             border-radius: 50%;
             border: 3px solid var(--accent-pink);
             background: var(--bg-primary);
-            z-index: 1;
+            z-index: 2;
             transition: all 0.3s;
         }
         .timeline-entry:hover .timeline-node {
             background: var(--accent-pink);
+            box-shadow: 0 0 16px var(--accent-pink);
+        }
+        .timeline-detail {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .timeline-detail.open { max-height: 500px; }
+
+        /* ============================================
+           FLOW BUILDER
+           ============================================ */
+        .flow-node {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+        }
+        .flow-node::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: inherit;
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+            opacity: 0;
+            z-index: -1;
+            transition: opacity 0.3s;
+            filter: blur(8px);
+        }
+        .flow-node.active::after { opacity: 0.4; }
+        .flow-node.active { border-color: var(--accent-pink) !important; background: rgba(216, 62, 156, 0.08) !important; }
+        .flow-node.completed { border-color: var(--accent-green) !important; }
+
+        .flow-connector {
+            height: 3px;
+            flex-grow: 1;
+            min-width: 12px;
+            position: relative;
+            background: var(--text-muted);
+            transition: background 0.6s;
+            border-radius: 2px;
+        }
+        .flow-connector.active { background: linear-gradient(90deg, var(--accent-green), var(--accent-pink)); }
+        .flow-connector.completed { background: var(--accent-green); }
+
+        .data-packet {
+            position: absolute;
+            width: 8px; height: 8px;
+            background: var(--accent-pink);
+            border-radius: 50%;
+            top: -3px;
             box-shadow: 0 0 12px var(--accent-pink);
+            animation: packet-fly 0.8s ease-in-out forwards;
+        }
+        @keyframes packet-fly {
+            0% { left: 0; opacity: 1; }
+            100% { left: calc(100% - 8px); opacity: 1; }
         }
 
-        /* Mobile menu */
-        .mobile-menu {
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
-        }
-        .mobile-menu.open {
-            transform: translateX(0);
-        }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--bg-primary); }
-        ::-webkit-scrollbar-thumb { background: #30363D; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #484F58; }
-
-        /* Flow detail panel */
         .flow-detail-panel {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.5s ease, opacity 0.3s ease;
             opacity: 0;
+            transition: max-height 0.5s ease, opacity 0.3s ease;
         }
-        .flow-detail-panel.open {
-            max-height: 300px;
-            opacity: 1;
+        .flow-detail-panel.open { max-height: 400px; opacity: 1; }
+
+        /* ============================================
+           SKILL BARS
+           ============================================ */
+        .skill-bar-track {
+            height: 6px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 3px;
+            overflow: hidden;
         }
+        .skill-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+            width: 0%;
+            transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* ============================================
+           RADAR CHART
+           ============================================ */
+        #radar-canvas { max-width: 380px; margin: 0 auto; }
+
+        /* ============================================
+           ANIMATED CODE BLOCK
+           ============================================ */
+        .code-block {
+            background: #0d1117;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .code-header {
+            padding: 10px 16px;
+            background: rgba(255,255,255,0.02);
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .code-body {
+            padding: 16px 20px;
+            font-size: 0.8rem;
+            line-height: 1.8;
+            overflow-x: auto;
+        }
+        .code-line-num { color: var(--text-muted); user-select: none; min-width: 28px; display: inline-block; }
+        .code-keyword { color: #ff7b72; }
+        .code-string { color: #a5d6ff; }
+        .code-func { color: #d2a8ff; }
+        .code-prop { color: #79c0ff; }
+        .code-comment { color: #484f58; font-style: italic; }
+        .code-const { color: #ffa657; }
+        .code-bool { color: #ff7b72; }
+        .code-num { color: #79c0ff; }
+
+        /* ============================================
+           COMMAND PALETTE (Cmd+K)
+           ============================================ */
+        .cmd-palette-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+            z-index: 10000;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 20vh;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+        .cmd-palette-overlay.open { opacity: 1; pointer-events: auto; }
+        .cmd-palette {
+            width: 90%; max-width: 560px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+            transform: scale(0.95) translateY(-10px);
+            transition: transform 0.2s;
+        }
+        .cmd-palette-overlay.open .cmd-palette { transform: scale(1) translateY(0); }
+        .cmd-input {
+            width: 100%;
+            padding: 16px 20px;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+        }
+        .cmd-input::placeholder { color: var(--text-muted); }
+        .cmd-results { max-height: 300px; overflow-y: auto; }
+        .cmd-item {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: background 0.15s;
+            color: var(--text-secondary);
+        }
+        .cmd-item:hover, .cmd-item.active { background: rgba(255,255,255,0.04); color: var(--text-primary); }
+        .cmd-item-icon { width: 20px; text-align: center; font-size: 0.9rem; }
+        .cmd-item-label { flex: 1; }
+        .cmd-item-shortcut { font-size: 0.7rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+
+        /* ============================================
+           NAV DOTS (Side)
+           ============================================ */
+        .nav-dots {
+            position: fixed;
+            right: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .nav-dot {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+        .nav-dot.active {
+            background: var(--accent-pink);
+            box-shadow: 0 0 10px var(--accent-pink);
+            transform: scale(1.3);
+        }
+        .nav-dot-label {
+            position: absolute;
+            right: 22px;
+            top: 50%;
+            transform: translateY(-50%);
+            white-space: nowrap;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+        }
+        .nav-dot:hover .nav-dot-label { opacity: 1; }
+
+        /* ============================================
+           MAGNETIC BUTTON
+           ============================================ */
+        .magnetic-btn {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ============================================
+           STAT COUNTER
+           ============================================ */
+        .stat-num {
+            font-size: 3rem;
+            font-weight: 700;
+            font-family: 'Space Grotesk', sans-serif;
+            line-height: 1;
+        }
+        @media (max-width: 768px) { .stat-num { font-size: 2rem; } }
+
+        /* ============================================
+           TESTIMONIAL CAROUSEL
+           ============================================ */
+        .carousel-container { position: relative; overflow: hidden; }
+        .carousel-track {
+            display: flex;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .carousel-slide { min-width: 100%; padding: 0 20px; }
+        .carousel-dots { display: flex; justify-content: center; gap: 8px; margin-top: 24px; }
+        .carousel-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .carousel-dot.active { background: var(--accent-pink); transform: scale(1.4); }
+
+        /* ============================================
+           ANIMATED SVG LOGO
+           ============================================ */
+        .logo-svg path {
+            stroke-dasharray: 200;
+            stroke-dashoffset: 200;
+            animation: draw-logo 2s ease forwards;
+        }
+        @keyframes draw-logo {
+            to { stroke-dashoffset: 0; }
+        }
+
+        /* ============================================
+           SCROLL TO TOP FAB
+           ============================================ */
+        #scroll-top {
+            position: fixed;
+            bottom: 32px; right: 32px;
+            width: 48px; height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        #scroll-top.visible { opacity: 1; transform: translateY(0); }
+        #scroll-top:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(216, 62, 156, 0.3); }
+
+        /* ============================================
+           MOBILE MENU
+           ============================================ */
+        .mobile-menu {
+            transform: translateX(100%);
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .mobile-menu.open { transform: translateX(0); }
+
+        /* ============================================
+           TOOL LOGOS SECTION
+           ============================================ */
+        .tool-icon {
+            width: 56px; height: 56px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.3s;
+        }
+        .tool-icon:hover { transform: scale(1.15) translateY(-4px); }
+
+        /* ============================================
+           KPI DASHBOARD
+           ============================================ */
+        .kpi-card { position: relative; overflow: hidden; }
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 4px; height: 100%;
+            border-radius: 0 2px 2px 0;
+        }
+        .kpi-spark {
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 32px;
+        }
+        .kpi-bar {
+            width: 4px;
+            border-radius: 2px;
+            background: var(--accent-pink);
+            opacity: 0.4;
+            transition: height 0.5s ease;
+        }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 768px) {
+            .nav-dots { display: none; }
+        }
+
+        /* Prevent layout shift */
+        img { max-width: 100%; height: auto; }
     </style>
 </head>
-<body class="antialiased">
+<body class="antialiased" data-theme="dark">
 
-    <!-- Header -->
-    <header class="sticky top-0 z-50 glass-card">
-        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="#" class="text-2xl font-bold text-white tracking-tight">DA<span class="accent-gradient-text">.</span></a>
-            <div class="hidden md:flex items-center space-x-8">
-                <a href="#about" class="text-sm hover:text-white transition-colors">About</a>
-                <a href="#experience" class="text-sm hover:text-white transition-colors">Experience</a>
-                <a href="#projects" class="text-sm hover:text-white transition-colors">Projects</a>
-                <a href="#competencies" class="text-sm hover:text-white transition-colors">Competencies</a>
-                <a href="#contact" class="accent-gradient text-white text-sm font-semibold py-2 px-5 rounded-lg hover:opacity-90 transition-opacity">Contact</a>
+    <!-- Reading Progress Bar -->
+    <div id="reading-progress"></div>
+
+    <!-- Matrix Rain Canvas (Easter Egg) -->
+    <canvas id="matrix-canvas"></canvas>
+
+    <!-- ============================================
+         COMMAND PALETTE (Cmd+K)
+         ============================================ -->
+    <div id="cmd-overlay" class="cmd-palette-overlay">
+        <div class="cmd-palette">
+            <input type="text" id="cmd-input" class="cmd-input" placeholder="Search or jump to..." autocomplete="off">
+            <div class="cmd-results" id="cmd-results"></div>
+            <div class="px-4 py-3 border-t border-white/5 flex items-center gap-4 text-xs" style="color: var(--text-muted);">
+                <span>↑↓ Navigate</span>
+                <span>↵ Select</span>
+                <span>ESC Close</span>
             </div>
-            <button id="mobile-toggle" class="md:hidden text-white">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-            </button>
+        </div>
+    </div>
+
+    <!-- ============================================
+         NAV DOTS (Side)
+         ============================================ -->
+    <div class="nav-dots" id="nav-dots">
+        <div class="nav-dot active" data-section="hero"><span class="nav-dot-label">Home</span></div>
+        <div class="nav-dot" data-section="about"><span class="nav-dot-label">About</span></div>
+        <div class="nav-dot" data-section="experience"><span class="nav-dot-label">Experience</span></div>
+        <div class="nav-dot" data-section="projects"><span class="nav-dot-label">Projects</span></div>
+        <div class="nav-dot" data-section="competencies"><span class="nav-dot-label">Skills</span></div>
+        <div class="nav-dot" data-section="toolbox"><span class="nav-dot-label">Toolbox</span></div>
+        <div class="nav-dot" data-section="testimonials"><span class="nav-dot-label">Testimonials</span></div>
+        <div class="nav-dot" data-section="contact"><span class="nav-dot-label">Contact</span></div>
+    </div>
+
+    <!-- ============================================
+         HEADER
+         ============================================ -->
+    <header class="sticky top-0 z-[200] glass" style="border-top: none; border-left: none; border-right: none;">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- Animated SVG Logo -->
+            <a href="#" class="flex items-center gap-1">
+                <svg class="logo-svg" width="40" height="32" viewBox="0 0 40 32" fill="none">
+                    <path d="M4 4 L4 28 L16 28 Q24 28 24 20 Q24 16 20 14 Q24 12 24 8 Q24 4 16 4 Z" stroke="var(--accent-pink)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M30 4 L30 28" stroke="var(--accent-purple)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                    <circle cx="36" cy="28" r="2.5" fill="var(--accent-pink)"/>
+                </svg>
+                <span class="text-xl font-bold font-heading" style="color: var(--text-primary);">DA<span class="gradient-text">.</span></span>
+            </a>
+
+            <!-- Desktop Nav -->
+            <div class="hidden lg:flex items-center gap-8">
+                <a href="#about" class="text-sm hover:text-white transition-colors magnetic-btn">About</a>
+                <a href="#experience" class="text-sm hover:text-white transition-colors magnetic-btn">Experience</a>
+                <a href="#projects" class="text-sm hover:text-white transition-colors magnetic-btn">Projects</a>
+                <a href="#competencies" class="text-sm hover:text-white transition-colors magnetic-btn">Skills</a>
+                <a href="#contact" class="gradient-bg text-white text-sm font-semibold py-2 px-5 rounded-lg hover:opacity-90 transition-opacity magnetic-btn">Contact</a>
+            </div>
+
+            <!-- Right side controls -->
+            <div class="flex items-center gap-3">
+                <!-- Cmd+K hint -->
+                <button id="cmd-trigger" class="hidden md:flex items-center gap-2 text-xs px-3 py-1.5 rounded-lg border transition-colors magnetic-btn" style="border-color: var(--border-color); color: var(--text-muted);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <span class="font-mono">⌘K</span>
+                </button>
+
+                <!-- Theme Toggle -->
+                <button id="theme-toggle" class="w-9 h-9 rounded-lg flex items-center justify-center transition-colors magnetic-btn" style="background: rgba(255,255,255,0.05);" title="Toggle theme">
+                    <svg id="theme-icon-dark" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                    <svg id="theme-icon-light" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                </button>
+
+                <!-- Matrix Easter Egg Toggle -->
+                <button id="matrix-toggle" class="w-9 h-9 rounded-lg flex items-center justify-center transition-colors magnetic-btn" style="background: rgba(255,255,255,0.05);" title="Toggle matrix rain">
+                    <span class="font-mono text-xs" style="color: var(--accent-green);">01</span>
+                </button>
+
+                <!-- Mobile Menu Toggle -->
+                <button id="mobile-toggle" class="lg:hidden w-9 h-9 rounded-lg flex items-center justify-center" style="background: rgba(255,255,255,0.05);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+            </div>
         </nav>
     </header>
 
     <!-- Mobile Menu -->
-    <div id="mobile-menu" class="mobile-menu fixed inset-y-0 right-0 w-72 z-50 bg-[#161B22] border-l border-white/10 p-8 flex flex-col space-y-6">
-        <button id="mobile-close" class="self-end text-white mb-4">
+    <div id="mobile-menu" class="mobile-menu fixed inset-y-0 right-0 w-80 z-[300] p-8 flex flex-col" style="background: var(--bg-secondary); border-left: 1px solid var(--border-color);">
+        <button id="mobile-close" class="self-end mb-8" style="color: var(--text-primary);">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
-        <a href="#about" class="text-lg text-white hover:text-pink-400 transition-colors mobile-link">About</a>
-        <a href="#experience" class="text-lg text-white hover:text-pink-400 transition-colors mobile-link">Experience</a>
-        <a href="#projects" class="text-lg text-white hover:text-pink-400 transition-colors mobile-link">Projects</a>
-        <a href="#competencies" class="text-lg text-white hover:text-pink-400 transition-colors mobile-link">Competencies</a>
-        <a href="#contact" class="text-lg text-white hover:text-pink-400 transition-colors mobile-link">Contact</a>
+        <div class="space-y-6">
+            <a href="#about" class="block text-lg font-semibold mobile-link" style="color: var(--text-primary);">About</a>
+            <a href="#experience" class="block text-lg font-semibold mobile-link" style="color: var(--text-primary);">Experience</a>
+            <a href="#projects" class="block text-lg font-semibold mobile-link" style="color: var(--text-primary);">Projects</a>
+            <a href="#competencies" class="block text-lg font-semibold mobile-link" style="color: var(--text-primary);">Skills</a>
+            <a href="#toolbox" class="block text-lg font-semibold mobile-link" style="color: var(--text-primary);">Toolbox</a>
+            <a href="#testimonials" class="block text-lg font-semibold mobile-link" style="color: var(--text-primary);">Testimonials</a>
+            <a href="#contact" class="block text-lg font-semibold mobile-link" style="color: var(--text-primary);">Contact</a>
+        </div>
+        <div class="mt-auto">
+            <div class="status-badge">
+                <span class="status-dot"></span>
+                Available for projects
+            </div>
+        </div>
     </div>
-    <div id="mobile-overlay" class="fixed inset-0 bg-black/50 z-40 hidden"></div>
+    <div id="mobile-overlay" class="fixed inset-0 bg-black/50 z-[250] hidden" style="backdrop-filter: blur(4px);"></div>
 
+    <!-- ============================================
+         MAIN CONTENT
+         ============================================ -->
     <main>
-        <!-- ======================== HERO ======================== -->
-        <section class="relative min-h-screen flex items-center justify-center overflow-hidden">
-            <canvas id="network-canvas"></canvas>
+
+        <!-- ======== HERO SECTION ======== -->
+        <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden">
+            <div class="mesh-gradient">
+                <div class="mesh-blob"></div>
+                <div class="mesh-blob"></div>
+                <div class="mesh-blob"></div>
+            </div>
+            <canvas id="particle-canvas"></canvas>
+
             <div class="relative z-10 container mx-auto px-6 py-20">
                 <div class="max-w-4xl mx-auto">
-                    <!-- Terminal component -->
-                    <div class="terminal max-w-2xl mx-auto mb-10">
-                        <div class="terminal-header">
+                    <!-- Status Badge -->
+                    <div class="flex justify-center mb-8 reveal">
+                        <div class="status-badge">
+                            <span class="status-dot"></span>
+                            Available for new projects
+                        </div>
+                    </div>
+
+                    <!-- Terminal -->
+                    <div class="terminal max-w-2xl mx-auto mb-12 reveal reveal-delay-1">
+                        <div class="terminal-bar">
                             <div class="terminal-dot" style="background:#FF5F57"></div>
                             <div class="terminal-dot" style="background:#FEBC2E"></div>
                             <div class="terminal-dot" style="background:#28C840"></div>
-                            <span class="text-xs text-gray-500 ml-2 mono">daniel@systems ~</span>
+                            <span class="text-xs font-mono ml-3" style="color: var(--text-muted);">daniel@systems ~ zsh</span>
                         </div>
-                        <div class="terminal-body mono text-sm leading-relaxed">
-                            <div id="terminal-output"></div>
-                        </div>
+                        <div class="terminal-body font-mono" id="terminal-output"></div>
                     </div>
 
-                    <div class="text-center">
-                        <h1 class="text-5xl md:text-7xl font-bold leading-tight">
-                            Daniel <span class="accent-gradient-text">Attfield</span>
+                    <!-- Heading -->
+                    <div class="text-center reveal reveal-delay-2">
+                        <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold leading-[0.95] tracking-tight">
+                            Daniel<br><span class="gradient-text">Attfield</span>
                         </h1>
-                        <p class="text-xl md:text-2xl mt-4 text-gray-400 max-w-2xl mx-auto">
-                            I connect the systems your business runs on — so data flows, processes automate, and people focus on work that matters.
+                        <p class="text-xl md:text-2xl mt-6 max-w-2xl mx-auto leading-relaxed" style="color: var(--text-secondary);">
+                            I connect the systems your business runs on — so data flows, processes automate, and people focus on work&nbsp;that&nbsp;matters.
                         </p>
-                        <div class="mt-8 flex flex-wrap justify-center gap-4">
-                            <a href="https://linkedin.com/in/danattfield" target="_blank" class="glass-card glass-card-hover text-white font-semibold py-3 px-6 rounded-lg flex items-center gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-                                LinkedIn
-                            </a>
-                            <a href="#contact" class="accent-gradient text-white font-semibold py-3 px-6 rounded-lg hover:opacity-90 transition-opacity">
-                                Get In Touch →
-                            </a>
+                    </div>
+
+                    <!-- CTA Buttons -->
+                    <div class="flex flex-wrap justify-center gap-4 mt-10 reveal reveal-delay-3">
+                        <a href="https://linkedin.com/in/danattfield" target="_blank" class="glass glass-hover font-semibold py-3 px-7 rounded-xl flex items-center gap-3 magnetic-btn" style="color: var(--text-primary);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                            LinkedIn
+                        </a>
+                        <a href="#projects" class="gradient-bg text-white font-semibold py-3 px-7 rounded-xl hover:opacity-90 transition-opacity magnetic-btn flex items-center gap-2">
+                            View My Work
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                        </a>
+                        <a href="#contact" class="glass glass-hover font-semibold py-3 px-7 rounded-xl magnetic-btn" style="color: var(--text-primary);">
+                            Get In Touch
+                        </a>
+                    </div>
+
+                    <!-- Scroll Indicator -->
+                    <div class="flex justify-center mt-16 reveal reveal-delay-4">
+                        <div class="flex flex-col items-center gap-2 animate-bounce" style="color: var(--text-muted);">
+                            <span class="text-xs font-mono">scroll</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="7 13 12 18 17 13"/><polyline points="7 6 12 11 17 6"/></svg>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- ======================== LIVE TICKER ======================== -->
-        <div class="py-6 border-y border-white/5">
-            <div class="ticker-wrapper">
-                <div class="ticker-track" id="ticker-track">
-                    <!-- Populated by JS -->
-                </div>
+        <!-- ======== INTEGRATION TICKER ======== -->
+        <div class="py-5 border-y" style="border-color: var(--border-color);">
+            <div class="ticker-wrap">
+                <div class="ticker-track" id="ticker-track"></div>
             </div>
         </div>
 
-        <!-- ======================== ABOUT / STATS ======================== -->
-        <section id="about" class="py-24 section-reveal">
+        <!-- ======== ABOUT + KPI DASHBOARD ======== -->
+        <section id="about" class="py-28">
             <div class="container mx-auto px-6">
-                <div class="max-w-4xl mx-auto text-center mb-16">
-                    <h2 class="text-4xl font-bold mb-6">Bridging Business <span class="accent-gradient-text">&</span> Technology</h2>
-                    <p class="text-lg text-gray-400 leading-relaxed max-w-3xl mx-auto">
-                        I'm a Technical Business Analyst based in Bristol, UK. I specialise in taking complex, messy business processes and turning them into clean, automated workflows. Whether it's connecting a CRM to an ERP, building offline-first field apps, or designing an end-to-end order pipeline — I translate what the business needs into systems that actually work.
+                <!-- About Text -->
+                <div class="max-w-3xl mx-auto text-center mb-20 reveal">
+                    <p class="text-xs font-mono uppercase tracking-widest mb-4 gradient-text">About Me</p>
+                    <h2 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+                        Bridging Business <span class="gradient-text">&</span> Technology
+                    </h2>
+                    <p class="text-lg leading-relaxed" style="color: var(--text-secondary);">
+                        I'm a Technical Business Analyst based in Bristol, UK. I specialise in taking complex, messy business processes and turning them into clean, automated workflows. Whether it's connecting a CRM to an ERP, building offline-first field apps, or designing an end-to-end order pipeline — I translate what the business needs into systems that actually&nbsp;work.
                     </p>
                 </div>
 
-                <!-- Impact Stats -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
-                    <div class="glass-card rounded-xl p-6 text-center glass-card-hover">
-                        <div class="stat-number accent-gradient-text" data-target="90" data-suffix="%">0%</div>
-                        <p class="text-sm text-gray-400 mt-2">Onboarding Time Reduced</p>
+                <!-- KPI Dashboard Cards -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-5 max-w-5xl mx-auto reveal">
+                    <div class="glass glass-hover rounded-2xl p-6 kpi-card tilt-card">
+                        <div class="tilt-shine" style="border-radius: 1rem;"></div>
+                        <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--accent-pink); border-radius: 0 2px 2px 0;"></div>
+                        <div class="tilt-card-inner">
+                            <p class="text-xs font-mono uppercase tracking-wider mb-3" style="color: var(--text-muted);">Time Saved</p>
+                            <div class="stat-num gradient-text" data-target="90" data-suffix="%">0%</div>
+                            <p class="text-sm mt-2" style="color: var(--text-secondary);">Onboarding reduced</p>
+                            <div class="kpi-spark mt-4" id="spark-1"></div>
+                        </div>
                     </div>
-                    <div class="glass-card rounded-xl p-6 text-center glass-card-hover">
-                        <div class="stat-number accent-gradient-text" data-target="15" data-suffix="+">0</div>
-                        <p class="text-sm text-gray-400 mt-2">APIs Integrated</p>
+                    <div class="glass glass-hover rounded-2xl p-6 kpi-card tilt-card">
+                        <div class="tilt-shine" style="border-radius: 1rem;"></div>
+                        <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--accent-blue); border-radius: 0 2px 2px 0;"></div>
+                        <div class="tilt-card-inner">
+                            <p class="text-xs font-mono uppercase tracking-wider mb-3" style="color: var(--text-muted);">Integrations</p>
+                            <div class="stat-num gradient-text" data-target="15" data-suffix="+">0</div>
+                            <p class="text-sm mt-2" style="color: var(--text-secondary);">APIs connected</p>
+                            <div class="kpi-spark mt-4" id="spark-2"></div>
+                        </div>
                     </div>
-                    <div class="glass-card rounded-xl p-6 text-center glass-card-hover">
-                        <div class="stat-number accent-gradient-text" data-target="100" data-suffix="s">0</div>
-                        <p class="text-sm text-gray-400 mt-2">Hours Saved Weekly</p>
+                    <div class="glass glass-hover rounded-2xl p-6 kpi-card tilt-card">
+                        <div class="tilt-shine" style="border-radius: 1rem;"></div>
+                        <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--accent-green); border-radius: 0 2px 2px 0;"></div>
+                        <div class="tilt-card-inner">
+                            <p class="text-xs font-mono uppercase tracking-wider mb-3" style="color: var(--text-muted);">Efficiency</p>
+                            <div class="stat-num gradient-text" data-target="100" data-suffix="s">0</div>
+                            <p class="text-sm mt-2" style="color: var(--text-secondary);">Hours saved weekly</p>
+                            <div class="kpi-spark mt-4" id="spark-3"></div>
+                        </div>
                     </div>
-                    <div class="glass-card rounded-xl p-6 text-center glass-card-hover">
-                        <div class="stat-number accent-gradient-text" data-target="5" data-suffix="+">0</div>
-                        <p class="text-sm text-gray-400 mt-2">Systems Connected</p>
+                    <div class="glass glass-hover rounded-2xl p-6 kpi-card tilt-card">
+                        <div class="tilt-shine" style="border-radius: 1rem;"></div>
+                        <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--accent-purple); border-radius: 0 2px 2px 0;"></div>
+                        <div class="tilt-card-inner">
+                            <p class="text-xs font-mono uppercase tracking-wider mb-3" style="color: var(--text-muted);">Platforms</p>
+                            <div class="stat-num gradient-text" data-target="5" data-suffix="+">0</div>
+                            <p class="text-sm mt-2" style="color: var(--text-secondary);">Systems orchestrated</p>
+                            <div class="kpi-spark mt-4" id="spark-4"></div>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- ======================== EXPERIENCE ======================== -->
-        <section id="experience" class="py-24 section-reveal">
+        <!-- ======== EXPERIENCE TIMELINE ======== -->
+        <section id="experience" class="py-28">
             <div class="container mx-auto px-6">
-                <h2 class="text-4xl font-bold text-center mb-16">Where I've <span class="accent-gradient-text">Worked</span></h2>
-                <div class="max-w-3xl mx-auto timeline-container" id="timeline-container">
-                    <!-- Populated by JS -->
+                <div class="text-center mb-16 reveal">
+                    <p class="text-xs font-mono uppercase tracking-widest mb-4 gradient-text">Career</p>
+                    <h2 class="text-4xl md:text-5xl font-bold">Where I've <span class="gradient-text">Worked</span></h2>
                 </div>
+                <div class="max-w-3xl mx-auto timeline reveal" id="timeline"></div>
             </div>
         </section>
 
-        <!-- ======================== PROJECTS ======================== -->
-        <section id="projects" class="py-24 section-reveal">
-            <div class="container mx-auto px-6">
-                <h2 class="text-4xl font-bold text-center mb-4">Project <span class="accent-gradient-text">Highlights</span></h2>
-                <p class="text-center text-gray-400 mb-16 max-w-2xl mx-auto">Click through the flow below to see how I architect end-to-end integrations — or explore the project cards.</p>
+        <!-- ======== PROJECTS ======== -->
+        <section id="projects" class="py-28 relative">
+            <div class="mesh-gradient" style="opacity: 0.3;">
+                <div class="mesh-blob" style="background: var(--accent-blue);"></div>
+                <div class="mesh-blob" style="background: var(--accent-purple); animation-delay: -10s;"></div>
+            </div>
+            <div class="container mx-auto px-6 relative z-10">
+                <div class="text-center mb-16 reveal">
+                    <p class="text-xs font-mono uppercase tracking-widest mb-4 gradient-text">Portfolio</p>
+                    <h2 class="text-4xl md:text-5xl font-bold">Project <span class="gradient-text">Highlights</span></h2>
+                    <p class="mt-4 max-w-xl mx-auto" style="color: var(--text-secondary);">Click through the interactive flow below to trace data through my Order-to-Cash pipeline.</p>
+                </div>
 
                 <!-- Interactive Flow Builder -->
-                <div class="glass-card rounded-xl p-8 mb-12 max-w-5xl mx-auto">
-                    <h3 class="text-xl font-bold mb-2">Order-to-Cash Pipeline</h3>
-                    <p class="text-gray-400 text-sm mb-8">Click each step to trace data through the system →</p>
-
-                    <!-- Flow Steps -->
-                    <div class="flex items-center justify-between mb-6 overflow-x-auto pb-4" id="flow-steps">
-                        <!-- Populated by JS -->
+                <div class="glass rounded-2xl p-6 md:p-10 mb-14 max-w-5xl mx-auto reveal">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-xl font-bold">Automated Order-to-Cash Pipeline</h3>
+                        <button id="flow-autoplay" class="text-xs font-mono px-3 py-1.5 rounded-lg transition-colors magnetic-btn" style="background: rgba(255,255,255,0.05); color: var(--text-muted);">
+                            ▶ Auto-play
+                        </button>
                     </div>
+                    <p class="text-sm mb-8" style="color: var(--text-muted);">Click each step to see the technical details →</p>
 
-                    <!-- Flow Detail Panel -->
-                    <div id="flow-detail" class="flow-detail-panel glass-card rounded-lg p-6">
-                        <div class="flex items-start gap-4">
-                            <div id="flow-detail-icon" class="text-3xl flex-shrink-0"></div>
-                            <div>
-                                <h4 id="flow-detail-title" class="font-bold text-white text-lg"></h4>
-                                <p id="flow-detail-desc" class="text-gray-400 mt-1 text-sm"></p>
-                                <div id="flow-detail-tech" class="flex flex-wrap gap-2 mt-3"></div>
+                    <!-- Flow Nodes -->
+                    <div class="flex items-center justify-between overflow-x-auto pb-4 gap-1" id="flow-nodes"></div>
+
+                    <!-- Flow Detail -->
+                    <div id="flow-detail" class="flow-detail-panel mt-6">
+                        <div class="glass rounded-xl p-6">
+                            <div class="flex items-start gap-4">
+                                <div id="flow-icon" class="text-3xl flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center" style="background: rgba(216,62,156,0.1);"></div>
+                                <div class="flex-1">
+                                    <h4 id="flow-title" class="font-bold text-lg" style="color: var(--text-primary);"></h4>
+                                    <p id="flow-desc" class="text-sm mt-1" style="color: var(--text-secondary);"></p>
+                                    <div id="flow-tech" class="flex flex-wrap gap-2 mt-3"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="mt-6 flex flex-wrap gap-2">
-                        <span class="bg-indigo-900/50 text-indigo-300 text-xs font-semibold px-3 py-1 rounded-full">Azure Logic Apps</span>
-                        <span class="bg-pink-900/50 text-pink-300 text-xs font-semibold px-3 py-1 rounded-full">REST APIs</span>
-                        <span class="bg-gray-700/50 text-gray-300 text-xs font-semibold px-3 py-1 rounded-full">Webhooks</span>
-                        <span class="bg-orange-900/50 text-orange-300 text-xs font-semibold px-3 py-1 rounded-full">HubSpot</span>
-                        <span class="bg-purple-900/50 text-purple-300 text-xs font-semibold px-3 py-1 rounded-full">Stripe</span>
-                        <span class="bg-blue-900/50 text-blue-300 text-xs font-semibold px-3 py-1 rounded-full">Xero</span>
+                    <div class="flex flex-wrap gap-2 mt-6">
+                        <span class="text-xs font-semibold px-3 py-1 rounded-full" style="background: rgba(88,166,255,0.1); color: var(--accent-blue);">Azure Logic Apps</span>
+                        <span class="text-xs font-semibold px-3 py-1 rounded-full" style="background: rgba(216,62,156,0.1); color: var(--accent-pink);">REST APIs</span>
+                        <span class="text-xs font-semibold px-3 py-1 rounded-full" style="background: rgba(255,255,255,0.05); color: var(--text-secondary);">Webhooks</span>
+                        <span class="text-xs font-semibold px-3 py-1 rounded-full" style="background: rgba(240,136,62,0.1); color: var(--accent-orange);">HubSpot</span>
+                        <span class="text-xs font-semibold px-3 py-1 rounded-full" style="background: rgba(142,95,168,0.1); color: var(--accent-purple);">Stripe</span>
+                        <span class="text-xs font-semibold px-3 py-1 rounded-full" style="background: rgba(63,185,80,0.1); color: var(--accent-green);">Xero</span>
                     </div>
                 </div>
 
                 <!-- Project Cards -->
                 <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-                    <div class="glass-card glass-card-hover rounded-xl p-8">
-                        <div class="flex items-center gap-3 mb-4">
-                            <div class="w-10 h-10 rounded-lg accent-gradient flex items-center justify-center text-white text-lg">📱</div>
-                            <h3 class="text-xl font-bold">Offline-First Field App</h3>
-                        </div>
-                        <p class="text-gray-400 text-sm leading-relaxed">
-                            Designed a robust Power App for engineers conducting site safety checks in low-connectivity areas. Built a queueing pattern using <code class="text-pink-400 bg-pink-900/20 px-1 rounded">SaveData</code>/<code class="text-pink-400 bg-pink-900/20 px-1 rounded">LoadData</code> for reliable data sync with SharePoint and COINS ERP.
-                        </p>
-                        <div class="flex flex-wrap gap-2 mt-5">
-                            <span class="bg-blue-900/50 text-blue-300 text-xs font-semibold px-3 py-1 rounded-full">Power Apps</span>
-                            <span class="bg-gray-700/50 text-gray-300 text-xs font-semibold px-3 py-1 rounded-full">SharePoint</span>
-                            <span class="bg-green-900/50 text-green-300 text-xs font-semibold px-3 py-1 rounded-full">COINS ERP</span>
-                            <span class="bg-yellow-900/50 text-yellow-300 text-xs font-semibold px-3 py-1 rounded-full">Offline-First</span>
+                    <!-- Project: Field App -->
+                    <div class="glass glass-hover rounded-2xl p-8 tilt-card reveal">
+                        <div class="tilt-shine" style="border-radius: 1rem;"></div>
+                        <div class="tilt-card-inner">
+                            <div class="flex items-center gap-3 mb-5">
+                                <div class="w-11 h-11 rounded-xl gradient-bg flex items-center justify-center text-white text-lg">📱</div>
+                                <div>
+                                    <h3 class="text-xl font-bold">Offline-First Field App</h3>
+                                    <p class="text-xs font-mono" style="color: var(--text-muted);">Power Platform • SharePoint • COINS</p>
+                                </div>
+                            </div>
+                            <p class="text-sm leading-relaxed" style="color: var(--text-secondary);">
+                                Designed a robust Power App for engineers conducting site safety checks in low-connectivity areas. Built a queueing pattern using <code class="font-mono text-xs px-1 rounded" style="background: rgba(216,62,156,0.1); color: var(--accent-pink);">SaveData</code>/<code class="font-mono text-xs px-1 rounded" style="background: rgba(216,62,156,0.1); color: var(--accent-pink);">LoadData</code> for reliable sync with SharePoint and COINS&nbsp;ERP.
+                            </p>
+
+                            <!-- Mini Code Snippet -->
+                            <div class="code-block mt-5">
+                                <div class="code-header">
+                                    <span class="text-xs font-mono" style="color: var(--text-muted);">sync-queue.fx</span>
+                                    <span class="text-xs" style="color: var(--text-muted);">Power Fx</span>
+                                </div>
+                                <div class="code-body font-mono" id="code-field-app"></div>
+                            </div>
+
+                            <div class="flex flex-wrap gap-2 mt-5">
+                                <span class="text-xs font-semibold px-3 py-1 rounded-full" style="background: rgba(88,166,255,0.1); color: var(--accent-blue);">Power Apps</span>
+                                <span class="text-xs font-semibold px-3 py-1 rounded-full" style="background: rgba(255,255,255,0.05); color: var(--text-secondary);">SharePoint</span>
+                                <span class="text-xs font-semibold px-3 py-1 rounded-full" style="background: rgba(63,185,80,0.1); color: var(--accent-green);">COINS ERP</span>
+                                <span class="text-xs font-semibold px-3 py-1 rounded-full" style="background: rgba(240,136,62,0.1); color: var(--accent-orange);">Offline-First</span>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="glass-card glass-card-hover rounded-xl p-8">
-                        <div class="flex items-center gap-3 mb-4">
-                            <div class="w-10 h-10 rounded-lg accent-gradient flex items-center justify-center text-white text-lg">🔗</div>
-                            <h3 class="text-xl font-bold">Unified Booking Platform</h3>
-                        </div>
-                        <p class="text-gray-400 text-sm leading-relaxed">
-                            Consolidated multiple siloed booking systems into a single centralised platform at Wokingham Borough Council. Reduced software licence costs, improved data visibility, and connected CRM, MRP, and payment systems through REST APIs and Azure tooling.
-                        </p>
-                        <div class="flex flex-wrap gap-2 mt-5">
-                            <span class="bg-indigo-900/50 text-indigo-300 text-xs font-semibold px-3 py-1 rounded-full">Azure APIM</span>
-                            <span class="bg-pink-900/50 text-pink-300 text-xs font-semibold px-3 py-1 rounded-full">REST APIs</span>
-                            <span class="bg-blue-900/50 text-blue-300 text-xs font-semibold px-3 py-1 rounded-full">Power Automate</span>
-                            <span class="bg-purple-900/50 text-purple-300 text-xs font-semibold px-3 py-1 rounded-full">Dynamics 365</span>
+                    <!-- Project: Unified Booking -->
+                    <div class="glass glass-hover rounded-2xl p-8 tilt-card reveal reveal-delay-1">
+                        <div class="tilt-shine" style="border-radius: 1rem;"></div>
+                        <div class="tilt-card-inner">
+                            <div class="flex items-center gap-3 mb-5">
+                                <div class="w-11 h-11 rounded-xl gradient-bg-blue flex items-center justify-center text-white text-lg">🔗</div>
+                                <div>
+                                    <h3 class="text-xl font-bold">Unified Booking Platform</h3>
+                                    <p class="text-xs font-mono" style="color: var(--text-muted);">Azure • Dynamics 365 • REST</p>
+                                </div>
+                            </div>
+                            <p class="text-sm leading-relaxed" style="color: var(--text-secondary);">
+                                Consolidated multiple siloed booking systems into a single centralised platform at Wokingham Borough Council. Reduced software licence costs, improved data visibility, and connected CRM, MRP, and payment systems through REST APIs and Azure tooling.
+                            </p>
+
+                            <!-- Architecture Diagram -->
+                            <div class="glass rounded-xl p-4 mt-5">
+                                <div class="flex items-center justify-around text-center text-xs" style="color: var(--text-secondary);">
+                                    <div class="flex flex-col items-center gap-1"><span class="text-2xl">📅</span><span>Booking A</span></div>
+                                    <div style="color: var(--text-muted);">→</div>
+                                    <div class="flex flex-col items-center gap-1"><span class="text-2xl">📅</span><span>Booking B</span></div>
+                                    <div style="color: var(--text-muted);">→</div>
+                                    <div class="flex flex-col items-center gap-1 px-3 py-2 rounded-lg" style="background: rgba(216,62,156,0.1); border: 1px solid rgba(216,62,156,0.2);"><span class="text-2xl">⚡</span><span class="font-semibold" style="color: var(--accent-pink);">Unified</span></div>
+                                    <div style="color: var(--text-muted);">→</div>
+                                    <div class="flex flex-col items-center gap-1"><span class="text-2xl">💰</span><span>Payments</span></div>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-wrap gap-2 mt-5">
+                                <span class="text-xs font-semibold px-3 py-1 rounded-full" style="background: rgba(88,166,255,0.1); color: var(--accent-blue);">Azure APIM</span>
+                                <span class="text-xs font-semibold px-3 py-1 rounded-full" style="background: rgba(216,62,156,0.1); color: var(--accent-pink);">REST APIs</span>
+                                <span class="text-xs font-semibold px-3 py-1 rounded-full" style="background: rgba(142,95,168,0.1); color: var(--accent-purple);">Dynamics 365</span>
+                                <span class="text-xs font-semibold px-3 py-1 rounded-full" style="background: rgba(63,185,80,0.1); color: var(--accent-green);">Power Automate</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- ======================== COMPETENCIES ======================== -->
-        <section id="competencies" class="py-24 section-reveal">
+        <!-- ======== COMPETENCIES ======== -->
+        <section id="competencies" class="py-28">
             <div class="container mx-auto px-6">
-                <h2 class="text-4xl font-bold text-center mb-16">Core <span class="accent-gradient-text">Competencies</span></h2>
+                <div class="text-center mb-16 reveal">
+                    <p class="text-xs font-mono uppercase tracking-widest mb-4 gradient-text">Expertise</p>
+                    <h2 class="text-4xl md:text-5xl font-bold">Core <span class="gradient-text">Competencies</span></h2>
+                </div>
 
-                <div class="grid lg:grid-cols-2 gap-12 max-w-5xl mx-auto items-center">
+                <div class="grid lg:grid-cols-2 gap-16 max-w-5xl mx-auto items-center">
                     <!-- Radar Chart -->
-                    <div>
+                    <div class="reveal">
                         <canvas id="radar-canvas" width="400" height="400"></canvas>
                     </div>
 
-                    <!-- Competency Cards -->
-                    <div class="space-y-6">
-                        <div class="glass-card glass-card-hover rounded-xl p-6">
-                            <div class="flex items-center gap-3 mb-3">
-                                <div class="w-8 h-8 rounded-lg bg-pink-500/20 flex items-center justify-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D83E9C" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+                    <!-- Skill Bars + Cards -->
+                    <div class="space-y-6 reveal reveal-delay-1">
+                        <!-- Integrations -->
+                        <div class="glass glass-hover rounded-2xl p-6">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background: rgba(216,62,156,0.1);">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-pink)" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
                                 </div>
                                 <h3 class="text-lg font-bold">Integrations & APIs</h3>
                             </div>
-                            <div class="flex flex-wrap gap-2">
-                                <span class="text-xs bg-white/5 text-gray-300 px-3 py-1 rounded-full">Azure APIM</span>
-                                <span class="text-xs bg-white/5 text-gray-300 px-3 py-1 rounded-full">REST API Design</span>
-                                <span class="text-xs bg-white/5 text-gray-300 px-3 py-1 rounded-full">Data Mapping</span>
-                                <span class="text-xs bg-white/5 text-gray-300 px-3 py-1 rounded-full">Integration Patterns</span>
+                            <div class="space-y-3">
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1"><span style="color: var(--text-secondary);">Azure API Management</span><span class="font-mono gradient-text">95%</span></div>
+                                    <div class="skill-bar-track"><div class="skill-bar-fill gradient-bg" data-width="95"></div></div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1"><span style="color: var(--text-secondary);">REST API Design</span><span class="font-mono gradient-text">92%</span></div>
+                                    <div class="skill-bar-track"><div class="skill-bar-fill gradient-bg" data-width="92"></div></div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1"><span style="color: var(--text-secondary);">Data Mapping & Transformation</span><span class="font-mono gradient-text">90%</span></div>
+                                    <div class="skill-bar-track"><div class="skill-bar-fill gradient-bg" data-width="90"></div></div>
+                                </div>
                             </div>
                         </div>
-                        <div class="glass-card glass-card-hover rounded-xl p-6">
-                            <div class="flex items-center gap-3 mb-3">
-                                <div class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#58A6FF" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+
+                        <!-- Cloud -->
+                        <div class="glass glass-hover rounded-2xl p-6">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background: rgba(88,166,255,0.1);">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-blue)" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
                                 </div>
                                 <h3 class="text-lg font-bold">Cloud & Platform</h3>
                             </div>
-                            <div class="flex flex-wrap gap-2">
-                                <span class="text-xs bg-white/5 text-gray-300 px-3 py-1 rounded-full">Azure Logic Apps</span>
-                                <span class="text-xs bg-white/5 text-gray-300 px-3 py-1 rounded-full">Azure Functions</span>
-                                <span class="text-xs bg-white/5 text-gray-300 px-3 py-1 rounded-full">Power Platform</span>
-                                <span class="text-xs bg-white/5 text-gray-300 px-3 py-1 rounded-full">Dataverse</span>
-                                <span class="text-xs bg-white/5 text-gray-300 px-3 py-1 rounded-full">D365 / HubSpot</span>
+                            <div class="space-y-3">
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1"><span style="color: var(--text-secondary);">Power Platform</span><span class="font-mono gradient-text">93%</span></div>
+                                    <div class="skill-bar-track"><div class="skill-bar-fill gradient-bg" data-width="93"></div></div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1"><span style="color: var(--text-secondary);">Azure Logic Apps / Functions</span><span class="font-mono gradient-text">88%</span></div>
+                                    <div class="skill-bar-track"><div class="skill-bar-fill gradient-bg" data-width="88"></div></div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1"><span style="color: var(--text-secondary);">Dataverse & D365</span><span class="font-mono gradient-text">85%</span></div>
+                                    <div class="skill-bar-track"><div class="skill-bar-fill gradient-bg" data-width="85"></div></div>
+                                </div>
                             </div>
                         </div>
-                        <div class="glass-card glass-card-hover rounded-xl p-6">
-                            <div class="flex items-center gap-3 mb-3">
-                                <div class="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3FB950" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+
+                        <!-- Analysis -->
+                        <div class="glass glass-hover rounded-2xl p-6">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background: rgba(63,185,80,0.1);">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-green)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                                 </div>
                                 <h3 class="text-lg font-bold">Analysis & Documentation</h3>
                             </div>
-                            <div class="flex flex-wrap gap-2">
-                                <span class="text-xs bg-white/5 text-gray-300 px-3 py-1 rounded-full">Requirements Workshops</span>
-                                <span class="text-xs bg-white/5 text-gray-300 px-3 py-1 rounded-full">Process Mapping</span>
-                                <span class="text-xs bg-white/5 text-gray-300 px-3 py-1 rounded-full">HLD Documents</span>
-                                <span class="text-xs bg-white/5 text-gray-300 px-3 py-1 rounded-full">User Stories & AC</span>
+                            <div class="space-y-3">
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1"><span style="color: var(--text-secondary);">Requirements & Workshops</span><span class="font-mono gradient-text">90%</span></div>
+                                    <div class="skill-bar-track"><div class="skill-bar-fill gradient-bg" data-width="90"></div></div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1"><span style="color: var(--text-secondary);">Process Mapping (As-Is / To-Be)</span><span class="font-mono gradient-text">92%</span></div>
+                                    <div class="skill-bar-track"><div class="skill-bar-fill gradient-bg" data-width="92"></div></div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1"><span style="color: var(--text-secondary);">User Stories & Acceptance Criteria</span><span class="font-mono gradient-text">88%</span></div>
+                                    <div class="skill-bar-track"><div class="skill-bar-fill gradient-bg" data-width="88"></div></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -534,52 +1205,143 @@
             </div>
         </section>
 
-        <!-- ======================== CONTACT ======================== -->
-        <section id="contact" class="py-24 section-reveal">
+        <!-- ======== TOOLBOX ======== -->
+        <section id="toolbox" class="py-28">
             <div class="container mx-auto px-6">
-                <div class="glass-card rounded-2xl p-12 max-w-3xl mx-auto text-center">
-                    <h2 class="text-4xl font-bold mb-4">Let's <span class="accent-gradient-text">Connect</span></h2>
-                    <p class="text-gray-400 text-lg mb-8 max-w-xl mx-auto">
-                        Looking for someone to untangle your systems, design integrations, or improve your business processes? Let's talk.
+                <div class="text-center mb-16 reveal">
+                    <p class="text-xs font-mono uppercase tracking-widest mb-4 gradient-text">Technology</p>
+                    <h2 class="text-4xl md:text-5xl font-bold">My <span class="gradient-text">Toolbox</span></h2>
+                </div>
+
+                <div class="flex flex-wrap justify-center gap-5 max-w-4xl mx-auto stagger-children reveal" id="toolbox-grid">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ======== ANIMATED CODE SHOWCASE ======== -->
+        <section class="py-28 relative">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16 reveal">
+                    <p class="text-xs font-mono uppercase tracking-widest mb-4 gradient-text">Under the Hood</p>
+                    <h2 class="text-4xl md:text-5xl font-bold">How I <span class="gradient-text">Think</span></h2>
+                    <p class="mt-4 max-w-xl mx-auto" style="color: var(--text-secondary);">A glimpse at how I approach integration architecture — as pseudocode.</p>
+                </div>
+
+                <div class="code-block max-w-3xl mx-auto reveal">
+                    <div class="code-header">
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full" style="background: #FF5F57;"></div>
+                            <div class="w-3 h-3 rounded-full" style="background: #FEBC2E;"></div>
+                            <div class="w-3 h-3 rounded-full" style="background: #28C840;"></div>
+                            <span class="text-xs font-mono ml-2" style="color: var(--text-muted);">order-pipeline.ts</span>
+                        </div>
+                        <span class="text-xs font-mono" style="color: var(--text-muted);">TypeScript</span>
+                    </div>
+                    <div class="code-body font-mono" id="code-showcase"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======== TESTIMONIALS ======== -->
+        <section id="testimonials" class="py-28">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16 reveal">
+                    <p class="text-xs font-mono uppercase tracking-widest mb-4 gradient-text">Social Proof</p>
+                    <h2 class="text-4xl md:text-5xl font-bold">What People <span class="gradient-text">Say</span></h2>
+                </div>
+
+                <div class="max-w-3xl mx-auto reveal">
+                    <div class="carousel-container glass rounded-2xl p-8 md:p-12">
+                        <div class="overflow-hidden">
+                            <div class="carousel-track" id="carousel-track">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+                        <div class="carousel-dots" id="carousel-dots"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======== CONTACT ======== -->
+        <section id="contact" class="py-28 relative">
+            <div class="mesh-gradient" style="opacity: 0.2;">
+                <div class="mesh-blob" style="background: var(--accent-pink);"></div>
+                <div class="mesh-blob" style="background: var(--accent-purple);"></div>
+            </div>
+            <div class="container mx-auto px-6 relative z-10">
+                <div class="glass rounded-3xl p-10 md:p-16 max-w-3xl mx-auto text-center reveal">
+                    <p class="text-xs font-mono uppercase tracking-widest mb-4 gradient-text">Let's Talk</p>
+                    <h2 class="text-4xl md:text-5xl font-bold mb-6">Let's <span class="gradient-text">Connect</span></h2>
+                    <p class="text-lg mb-10 max-w-xl mx-auto" style="color: var(--text-secondary);">
+                        Looking for someone to untangle your systems, design integrations, or improve your business processes? I'd love to hear from you.
                     </p>
-                    <div class="flex flex-wrap justify-center gap-4 mb-8">
-                        <a href="mailto:daniel@danielattfield.co.uk" class="accent-gradient text-white font-semibold py-3 px-8 rounded-lg text-lg hover:opacity-90 transition-opacity flex items-center gap-2">
+
+                    <div class="flex flex-wrap justify-center gap-4 mb-10">
+                        <a href="mailto:daniel@danielattfield.co.uk" class="gradient-bg text-white font-semibold py-4 px-8 rounded-xl text-lg hover:opacity-90 transition-opacity flex items-center gap-3 magnetic-btn">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
                             Email Me
                         </a>
-                        <a href="https://linkedin.com/in/danattfield" target="_blank" class="glass-card glass-card-hover text-white font-semibold py-3 px-8 rounded-lg text-lg flex items-center gap-2">
+                        <a href="https://linkedin.com/in/danattfield" target="_blank" class="glass glass-hover font-semibold py-4 px-8 rounded-xl text-lg flex items-center gap-3 magnetic-btn" style="color: var(--text-primary);">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
                             LinkedIn
                         </a>
                     </div>
-                    <p class="text-gray-500 text-sm">📍 Bristol, UK &nbsp;•&nbsp; 📞 07711 210603</p>
+
+                    <div class="flex flex-wrap justify-center gap-6 text-sm" style="color: var(--text-muted);">
+                        <span class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                            Bristol, UK
+                        </span>
+                        <span class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                            07711 210603
+                        </span>
+                    </div>
                 </div>
             </div>
         </section>
     </main>
 
-    <!-- Footer -->
-    <footer class="border-t border-white/5 py-8">
-        <div class="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
-            <p>© 2025 Daniel Attfield. Built with curiosity and too many API calls.</p>
-            <button id="share-button" class="mt-4 md:mt-0 flex items-center gap-2 hover:text-white transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-                Share this page
-            </button>
+    <!-- ======== FOOTER ======== -->
+    <footer class="py-10" style="border-top: 1px solid var(--border-color);">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="text-sm" style="color: var(--text-muted);">
+                    © 2025 Daniel Attfield. Built with curiosity and too many API calls.
+                </div>
+                <div class="flex items-center gap-6">
+                    <span class="text-xs" style="color: var(--text-muted);">🍪 No tracking. No cookies. Just a clean website.</span>
+                    <button id="share-btn" class="flex items-center gap-2 text-sm transition-colors magnetic-btn" style="color: var(--text-muted);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                        Share
+                    </button>
+                </div>
+            </div>
         </div>
     </footer>
 
-    <!-- Toast -->
-    <div id="toast" class="fixed bottom-6 right-6 bg-green-500 text-white py-3 px-5 rounded-lg shadow-lg opacity-0 transform translate-y-4 transition-all duration-300 z-50 flex items-center gap-2">
+    <!-- Scroll to Top FAB -->
+    <button id="scroll-top" class="gradient-bg text-white" aria-label="Scroll to top">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
+    </button>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 py-3 px-5 rounded-xl shadow-2xl opacity-0 transform translate-y-4 transition-all duration-300 z-[9999] flex items-center gap-2 text-white font-semibold" style="background: var(--accent-green);">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-        Link copied to clipboard!
+        <span id="toast-text">Link copied!</span>
     </div>
 
+
+    <!-- ============================================
+         JAVASCRIPT
+         ============================================ -->
     <script>
-    // ==============================
-    //  DATA
-    // ==============================
-    const experienceData = [
+    // ============================================
+    //  ALL DATA
+    // ============================================
+    const EXPERIENCE = [
         {
             role: 'Business Systems Analyst',
             company: 'ATFI (Consultancy)',
@@ -615,484 +1377,869 @@
         }
     ];
 
-    const flowSteps = [
-        {
-            icon: '🟠',
-            label: 'HubSpot',
-            title: 'Deal Won → Webhook Fires',
-            desc: 'When a sales rep marks a deal as "Won" in HubSpot, a webhook fires immediately, sending the full customer and deal payload to a secure Azure endpoint.',
-            tech: ['HubSpot Workflows', 'Webhooks', 'JSON Payload']
-        },
-        {
-            icon: '☁️',
-            label: 'Azure',
-            title: 'API Gateway & Orchestration',
-            desc: 'Azure API Management authenticates and validates the incoming request, then routes it to an Azure Logic App that orchestrates the entire downstream workflow.',
-            tech: ['Azure APIM', 'Logic Apps', 'OAuth 2.0']
-        },
-        {
-            icon: '📦',
-            label: 'ERP',
-            title: 'Customer & Project Creation',
-            desc: 'The Logic App transforms HubSpot data to match the ERP schema and creates a new customer record and project via the ERP\'s REST API.',
-            tech: ['REST API', 'Data Mapping', 'Schema Transform']
-        },
-        {
-            icon: '💳',
-            label: 'Stripe',
-            title: 'Invoice & Payment Link',
-            desc: 'On successful ERP entry, the Logic App calls the Stripe API to generate an invoice and a secure payment link, which is emailed to the customer automatically.',
-            tech: ['Stripe API', 'Payment Links', 'Email Triggers']
-        },
-        {
-            icon: '🧾',
-            label: 'Xero',
-            title: 'Financial Reconciliation',
-            desc: 'A Stripe webhook on "payment_successful" triggers a second Logic App to create a matching sales invoice in Xero, closing the financial loop.',
-            tech: ['Xero API', 'Webhook Listener', 'Reconciliation']
-        },
-        {
-            icon: '🔔',
-            label: 'Teams',
-            title: 'Stakeholder Notification',
-            desc: 'Real-time status updates are posted to a dedicated Microsoft Teams channel at every stage, giving full visibility to stakeholders without them checking multiple systems.',
-            tech: ['Teams Connector', 'Adaptive Cards', 'Status Tracking']
-        }
+    const FLOW_STEPS = [
+        { icon: '🟠', label: 'HubSpot', title: 'Deal Won → Webhook Fires', desc: 'When a sales rep marks a deal as "Won" in HubSpot, a webhook fires immediately, sending the full customer and deal payload to a secure Azure endpoint.', tech: ['HubSpot Workflows', 'Webhooks', 'JSON'] },
+        { icon: '☁️', label: 'Azure', title: 'API Gateway & Orchestration', desc: 'Azure API Management authenticates and validates the incoming request, then routes it to an Azure Logic App that orchestrates the entire downstream workflow.', tech: ['Azure APIM', 'Logic Apps', 'OAuth 2.0'] },
+        { icon: '📦', label: 'ERP', title: 'Customer & Project Creation', desc: 'The Logic App transforms HubSpot data to match the ERP schema and creates a new customer record and project via the ERP\'s REST API.', tech: ['REST API', 'Data Mapping', 'Schema Transform'] },
+        { icon: '💳', label: 'Stripe', title: 'Invoice & Payment Link', desc: 'On successful ERP entry, the Logic App calls the Stripe API to generate an invoice and a secure payment link, emailed to the customer automatically.', tech: ['Stripe API', 'Payment Links', 'Email'] },
+        { icon: '🧾', label: 'Xero', title: 'Financial Reconciliation', desc: 'A Stripe webhook on "payment_successful" triggers a second Logic App to create a matching sales invoice in Xero, closing the financial loop.', tech: ['Xero API', 'Webhook Listener', 'Reconciliation'] },
+        { icon: '🔔', label: 'Teams', title: 'Stakeholder Notification', desc: 'Real-time status updates posted to a dedicated Microsoft Teams channel at every stage for full stakeholder visibility.', tech: ['Teams Connector', 'Adaptive Cards', 'Alerts'] }
     ];
 
-    const tickerEvents = [
-        { text: 'POST /api/deals/webhook → 201 Created', color: '#3FB950', system: 'HubSpot' },
-        { text: 'Logic App: OrderPipeline triggered', color: '#58A6FF', system: 'Azure' },
-        { text: 'PUT /customers/new → ERP sync complete', color: '#D83E9C', system: 'ERP' },
-        { text: 'Stripe Invoice INV-2024-0847 generated', color: '#A371F7', system: 'Stripe' },
-        { text: 'Payment £2,400.00 received — reconciling', color: '#3FB950', system: 'Xero' },
-        { text: 'Teams: "New deal closed — Acme Corp"', color: '#58A6FF', system: 'Teams' },
-        { text: 'GET /api/field-reports?status=pending', color: '#D83E9C', system: 'Power Apps' },
-        { text: 'SaveData() → 12 records queued offline', color: '#F0883E', system: 'Field App' },
-        { text: 'SharePoint: Safety report uploaded', color: '#3FB950', system: 'SharePoint' },
-        { text: 'PATCH /projects/PRJ-441 → status: active', color: '#A371F7', system: 'COINS' },
-        { text: 'Power Automate: Approval flow triggered', color: '#58A6FF', system: 'M365' },
-        { text: 'Data transform: HubSpot → ERP schema mapped', color: '#D83E9C', system: 'Azure' },
+    const TICKER_EVENTS = [
+        { text: 'POST /api/deals/webhook → 201 Created', color: '#3FB950', sys: 'HubSpot' },
+        { text: 'Logic App: OrderPipeline triggered', color: '#58A6FF', sys: 'Azure' },
+        { text: 'PUT /customers/new → ERP sync complete', color: '#D83E9C', sys: 'ERP' },
+        { text: 'Stripe Invoice INV-2024-0847 generated', color: '#A371F7', sys: 'Stripe' },
+        { text: 'Payment £2,400 received — reconciling', color: '#3FB950', sys: 'Xero' },
+        { text: 'Teams: "New deal closed — Acme Corp"', color: '#58A6FF', sys: 'Teams' },
+        { text: 'GET /api/field-reports?status=pending', color: '#D83E9C', sys: 'Power Apps' },
+        { text: 'SaveData() → 12 records queued offline', color: '#F0883E', sys: 'Field App' },
+        { text: 'SharePoint: Safety report uploaded', color: '#3FB950', sys: 'SharePoint' },
+        { text: 'PATCH /projects/PRJ-441 → active', color: '#A371F7', sys: 'COINS' },
+        { text: 'Power Automate: Approval flow triggered', color: '#58A6FF', sys: 'M365' },
+        { text: 'Schema transform: HubSpot → ERP mapped', color: '#D83E9C', sys: 'Azure' },
     ];
 
-    // ==============================
-    //  NETWORK CANVAS (Hero background)
-    // ==============================
-    const canvas = document.getElementById('network-canvas');
-    const ctx = canvas.getContext('2d');
-    let nodes = [];
-    const NODE_COUNT = 50;
-    const CONNECTION_DIST = 150;
+    const TOOLS = [
+        { name: 'Azure', icon: '☁️', color: '#0078D4' },
+        { name: 'Power Apps', icon: '⚡', color: '#742774' },
+        { name: 'Power Automate', icon: '🔄', color: '#0066FF' },
+        { name: 'Logic Apps', icon: '🔧', color: '#0078D4' },
+        { name: 'HubSpot', icon: '🟠', color: '#FF7A59' },
+        { name: 'Stripe', icon: '💳', color: '#635BFF' },
+        { name: 'Xero', icon: '🧾', color: '#13B5EA' },
+        { name: 'SharePoint', icon: '📁', color: '#038387' },
+        { name: 'Dynamics 365', icon: '🏢', color: '#002050' },
+        { name: 'Dataverse', icon: '🗄️', color: '#742774' },
+        { name: 'REST APIs', icon: '🔌', color: '#D83E9C' },
+        { name: 'Teams', icon: '💬', color: '#6264A7' },
+        { name: 'COINS ERP', icon: '🏗️', color: '#F0883E' },
+        { name: 'SQL', icon: '🛢️', color: '#CC2927' },
+        { name: 'DevOps', icon: '🚀', color: '#0078D7' },
+    ];
 
-    function resizeCanvas() {
-        canvas.width = canvas.parentElement.offsetWidth;
-        canvas.height = canvas.parentElement.offsetHeight;
+    const TESTIMONIALS = [
+        { quote: "Daniel brought structure to what was a tangled mess of disconnected systems. His integration work saved us countless hours every week and gave us visibility we never had before.", author: "Senior IT Manager", company: "Tepeo Ltd" },
+        { quote: "His ability to translate technical architecture into plain English for stakeholders — and then actually build what he described — is rare. An exceptional BA with genuine technical depth.", author: "Programme Lead", company: "Wokingham Borough Council" },
+        { quote: "Daniel designed our offline field app from scratch. The fact that engineers in remote areas can now reliably capture safety data and have it sync automatically has been transformative.", author: "Operations Director", company: "ATFI" },
+    ];
+
+    const CMD_ITEMS = [
+        { icon: '🏠', label: 'Home', section: 'hero' },
+        { icon: '👤', label: 'About Me', section: 'about' },
+        { icon: '💼', label: 'Experience', section: 'experience' },
+        { icon: '🚀', label: 'Projects', section: 'projects' },
+        { icon: '📊', label: 'Competencies', section: 'competencies' },
+        { icon: '🧰', label: 'Toolbox', section: 'toolbox' },
+        { icon: '💬', label: 'Testimonials', section: 'testimonials' },
+        { icon: '📧', label: 'Contact', section: 'contact' },
+        { icon: '🌙', label: 'Toggle Dark/Light Mode', action: 'theme' },
+        { icon: '🟢', label: 'Toggle Matrix Rain', action: 'matrix' },
+        { icon: '🔗', label: 'Copy Link', action: 'share' },
+        { icon: '🔵', label: 'Open LinkedIn', action: 'linkedin' },
+    ];
+
+    const TERMINAL_LINES = [
+        { type: 'prompt', text: '$ whoami' },
+        { type: 'out', text: 'Daniel Attfield — Technical Business Analyst' },
+        { type: 'prompt', text: '$ cat skills.json | jq .focus' },
+        { type: 'hl', text: '"System Integration & Process Automation"' },
+        { type: 'prompt', text: '$ curl -s GET /api/systems/status' },
+        { type: 'blue', text: '→ HubSpot ⟷ Azure ⟷ ERP ⟷ Stripe ⟷ Xero' },
+        { type: 'out', text: '  All systems operational ✓' },
+        { type: 'prompt', text: '$ echo $AVAILABILITY' },
+        { type: 'hl', text: 'Open to new projects. Let\'s talk.' },
+    ];
+
+    // ============================================
+    //  PARTICLE CONSTELLATION CANVAS
+    // ============================================
+    const pCanvas = document.getElementById('particle-canvas');
+    const pCtx = pCanvas.getContext('2d');
+    let particles = [];
+    let mouseX = -1000, mouseY = -1000;
+    const PARTICLE_COUNT = 60;
+    const CONNECT_DIST = 140;
+    const MOUSE_DIST = 200;
+
+    function resizeParticleCanvas() {
+        pCanvas.width = pCanvas.parentElement.offsetWidth;
+        pCanvas.height = pCanvas.parentElement.offsetHeight;
     }
 
-    function initNodes() {
-        nodes = [];
-        for (let i = 0; i < NODE_COUNT; i++) {
-            nodes.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                vx: (Math.random() - 0.5) * 0.5,
-                vy: (Math.random() - 0.5) * 0.5,
-                r: Math.random() * 2 + 1
+    function initParticles() {
+        particles = [];
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+            particles.push({
+                x: Math.random() * pCanvas.width,
+                y: Math.random() * pCanvas.height,
+                vx: (Math.random() - 0.5) * 0.4,
+                vy: (Math.random() - 0.5) * 0.4,
+                r: Math.random() * 2 + 0.5,
             });
         }
     }
 
-    function drawNetwork() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    function drawParticles() {
+        pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
 
-        // Connections
-        for (let i = 0; i < nodes.length; i++) {
-            for (let j = i + 1; j < nodes.length; j++) {
-                const dx = nodes[i].x - nodes[j].x;
-                const dy = nodes[i].y - nodes[j].y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < CONNECTION_DIST) {
-                    const opacity = (1 - dist / CONNECTION_DIST) * 0.3;
-                    ctx.strokeStyle = `rgba(216, 62, 156, ${opacity})`;
-                    ctx.lineWidth = 1;
-                    ctx.beginPath();
-                    ctx.moveTo(nodes[i].x, nodes[i].y);
-                    ctx.lineTo(nodes[j].x, nodes[j].y);
-                    ctx.stroke();
+        for (let i = 0; i < particles.length; i++) {
+            const p = particles[i];
+
+            // Mouse interaction — attract slightly
+            const dxm = mouseX - p.x, dym = mouseY - p.y;
+            const dm = Math.sqrt(dxm * dxm + dym * dym);
+            if (dm < MOUSE_DIST && dm > 0) {
+                p.vx += (dxm / dm) * 0.015;
+                p.vy += (dym / dm) * 0.015;
+            }
+
+            // Dampen velocity
+            p.vx *= 0.99;
+            p.vy *= 0.99;
+
+            p.x += p.vx;
+            p.y += p.vy;
+            if (p.x < 0 || p.x > pCanvas.width) p.vx *= -1;
+            if (p.y < 0 || p.y > pCanvas.height) p.vy *= -1;
+
+            // Draw connections
+            for (let j = i + 1; j < particles.length; j++) {
+                const q = particles[j];
+                const dx = p.x - q.x, dy = p.y - q.y;
+                const d = Math.sqrt(dx * dx + dy * dy);
+                if (d < CONNECT_DIST) {
+                    const o = (1 - d / CONNECT_DIST) * 0.25;
+                    pCtx.strokeStyle = `rgba(216, 62, 156, ${o})`;
+                    pCtx.lineWidth = 1;
+                    pCtx.beginPath();
+                    pCtx.moveTo(p.x, p.y);
+                    pCtx.lineTo(q.x, q.y);
+                    pCtx.stroke();
                 }
             }
+
+            // Draw particle
+            const glow = dm < MOUSE_DIST ? 0.8 : 0.4;
+            pCtx.fillStyle = `rgba(142, 95, 168, ${glow})`;
+            pCtx.beginPath();
+            pCtx.arc(p.x, p.y, dm < MOUSE_DIST ? p.r * 1.5 : p.r, 0, Math.PI * 2);
+            pCtx.fill();
         }
 
-        // Nodes
-        nodes.forEach(n => {
-            ctx.fillStyle = 'rgba(142, 95, 168, 0.6)';
-            ctx.beginPath();
-            ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
-            ctx.fill();
-
-            n.x += n.vx;
-            n.y += n.vy;
-            if (n.x < 0 || n.x > canvas.width) n.vx *= -1;
-            if (n.y < 0 || n.y > canvas.height) n.vy *= -1;
-        });
-
-        requestAnimationFrame(drawNetwork);
+        requestAnimationFrame(drawParticles);
     }
 
-    window.addEventListener('resize', () => { resizeCanvas(); initNodes(); });
-    resizeCanvas();
-    initNodes();
-    drawNetwork();
+    pCanvas.parentElement.addEventListener('mousemove', e => {
+        const rect = pCanvas.parentElement.getBoundingClientRect();
+        mouseX = e.clientX - rect.left;
+        mouseY = e.clientY - rect.top;
+    });
+    pCanvas.parentElement.addEventListener('mouseleave', () => { mouseX = -1000; mouseY = -1000; });
 
-    // ==============================
+    window.addEventListener('resize', () => { resizeParticleCanvas(); initParticles(); });
+    resizeParticleCanvas();
+    initParticles();
+    drawParticles();
+
+    // ============================================
+    //  MATRIX RAIN (Easter Egg)
+    // ============================================
+    const matrixCanvas = document.getElementById('matrix-canvas');
+    const mCtx = matrixCanvas.getContext('2d');
+    let matrixActive = false;
+    let matrixColumns = [];
+    const MATRIX_CHARS = 'アカサタナハマヤラワABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789<>{}[]|/\\';
+
+    function initMatrix() {
+        matrixCanvas.width = window.innerWidth;
+        matrixCanvas.height = window.innerHeight;
+        const cols = Math.floor(matrixCanvas.width / 14);
+        matrixColumns = Array(cols).fill(0).map(() => Math.random() * matrixCanvas.height);
+    }
+
+    function drawMatrix() {
+        if (!matrixActive) return;
+        mCtx.fillStyle = 'rgba(11, 15, 25, 0.05)';
+        mCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+        mCtx.fillStyle = '#3FB950';
+        mCtx.font = '13px JetBrains Mono, monospace';
+
+        matrixColumns.forEach((y, i) => {
+            const char = MATRIX_CHARS[Math.floor(Math.random() * MATRIX_CHARS.length)];
+            mCtx.fillText(char, i * 14, y);
+            matrixColumns[i] = y > matrixCanvas.height + Math.random() * 1000 ? 0 : y + 14;
+        });
+        requestAnimationFrame(drawMatrix);
+    }
+
+    document.getElementById('matrix-toggle').addEventListener('click', () => {
+        matrixActive = !matrixActive;
+        matrixCanvas.classList.toggle('active', matrixActive);
+        if (matrixActive) { initMatrix(); drawMatrix(); }
+    });
+    window.addEventListener('resize', () => { if (matrixActive) initMatrix(); });
+
+    // ============================================
     //  TERMINAL TYPEWRITER
-    // ==============================
-    const terminalLines = [
-        { type: 'prompt', text: '$ whoami' },
-        { type: 'output', text: 'Daniel Attfield — Technical Business Analyst' },
-        { type: 'prompt', text: '$ cat skills.json' },
-        { type: 'output', text: '{ "focus": "System Integration & Process Automation" }' },
-        { type: 'prompt', text: '$ curl -X GET /api/systems/connected' },
-        { type: 'highlight', text: '→ HubSpot ⟷ Azure ⟷ ERP ⟷ Stripe ⟷ Xero ✓' },
-        { type: 'prompt', text: '$ echo $STATUS' },
-        { type: 'output', text: 'Ready for new challenges.' },
-    ];
-
-    const terminalOutput = document.getElementById('terminal-output');
-    let lineIndex = 0;
-    let charIndex = 0;
-    let currentLineEl = null;
+    // ============================================
+    const termOut = document.getElementById('terminal-output');
+    let tLineIdx = 0, tCharIdx = 0, tCurrentEl = null;
 
     function typeTerminal() {
-        if (lineIndex >= terminalLines.length) return;
+        if (tLineIdx >= TERMINAL_LINES.length) return;
+        const line = TERMINAL_LINES[tLineIdx];
 
-        const line = terminalLines[lineIndex];
-
-        if (charIndex === 0) {
-            currentLineEl = document.createElement('div');
-            currentLineEl.className = `terminal-${line.type}`;
-            terminalOutput.appendChild(currentLineEl);
+        if (tCharIdx === 0) {
+            tCurrentEl = document.createElement('div');
+            tCurrentEl.className = `t-${line.type}`;
+            termOut.appendChild(tCurrentEl);
         }
 
-        if (charIndex < line.text.length) {
-            currentLineEl.textContent = line.text.substring(0, charIndex + 1);
-            charIndex++;
-
-            // Remove old cursor, add new one
-            const existingCursor = terminalOutput.querySelector('.terminal-cursor');
-            if (existingCursor) existingCursor.remove();
-            const cursor = document.createElement('span');
-            cursor.className = 'terminal-cursor';
-            currentLineEl.appendChild(cursor);
-
-            const speed = line.type === 'prompt' ? 60 : 25;
-            setTimeout(typeTerminal, speed);
+        if (tCharIdx < line.text.length) {
+            tCurrentEl.textContent = line.text.substring(0, tCharIdx + 1);
+            tCharIdx++;
+            const old = termOut.querySelector('.t-cursor');
+            if (old) old.remove();
+            const cur = document.createElement('span');
+            cur.className = 't-cursor';
+            tCurrentEl.appendChild(cur);
+            setTimeout(typeTerminal, line.type === 'prompt' ? 55 : 20);
         } else {
-            const existingCursor = terminalOutput.querySelector('.terminal-cursor');
-            if (existingCursor) existingCursor.remove();
-
-            lineIndex++;
-            charIndex = 0;
-            setTimeout(typeTerminal, line.type === 'prompt' ? 500 : 800);
+            const old = termOut.querySelector('.t-cursor');
+            if (old) old.remove();
+            tLineIdx++;
+            tCharIdx = 0;
+            setTimeout(typeTerminal, line.type === 'prompt' ? 400 : 700);
         }
     }
+    setTimeout(typeTerminal, 800);
 
-    setTimeout(typeTerminal, 600);
-
-    // ==============================
+    // ============================================
     //  TICKER
-    // ==============================
+    // ============================================
     const tickerTrack = document.getElementById('ticker-track');
-    // Duplicate for infinite scroll
-    const allEvents = [...tickerEvents, ...tickerEvents];
-    allEvents.forEach(evt => {
+    [...TICKER_EVENTS, ...TICKER_EVENTS].forEach(e => {
         const item = document.createElement('div');
         item.className = 'ticker-item';
-        item.innerHTML = `
-            <span class="ticker-dot" style="background:${evt.color}"></span>
-            <span class="text-gray-500">${evt.system}</span>
-            <span class="mono text-gray-300">${evt.text}</span>
-        `;
+        item.innerHTML = `<span class="ticker-dot" style="background:${e.color}"></span><span style="color:var(--text-muted)">${e.sys}</span><span class="font-mono" style="color:var(--text-secondary)">${e.text}</span>`;
         tickerTrack.appendChild(item);
     });
 
-    // ==============================
+    // ============================================
     //  TIMELINE
-    // ==============================
-    const timelineContainer = document.getElementById('timeline-container');
-    experienceData.forEach((job, i) => {
+    // ============================================
+    const timeline = document.getElementById('timeline');
+    EXPERIENCE.forEach((job, i) => {
         const entry = document.createElement('div');
         entry.className = 'timeline-entry relative pl-14 pb-12';
         entry.innerHTML = `
             <div class="timeline-node"></div>
-            <div class="glass-card glass-card-hover rounded-xl p-6">
+            <div class="glass glass-hover rounded-2xl p-6 cursor-pointer" onclick="this.querySelector('.timeline-detail').classList.toggle('open')">
                 <div class="flex flex-wrap items-center gap-3 mb-2">
-                    <span class="text-xs mono text-gray-500">${job.period}</span>
-                    <span class="text-xs px-2 py-0.5 rounded-full ${job.type === 'Contract' ? 'bg-yellow-900/50 text-yellow-300' : 'bg-green-900/50 text-green-300'}">${job.type}</span>
+                    <span class="text-xs font-mono" style="color:var(--text-muted)">${job.period}</span>
+                    <span class="text-xs px-2 py-0.5 rounded-full" style="background:${job.type==='Contract'?'rgba(240,136,62,0.1)':'rgba(63,185,80,0.1)'}; color:${job.type==='Contract'?'var(--accent-orange)':'var(--accent-green)'};">${job.type}</span>
                 </div>
                 <h3 class="text-xl font-bold">${job.role}</h3>
-                <h4 class="text-lg accent-gradient-text font-semibold">${job.company}</h4>
-                <ul class="mt-3 space-y-2 text-gray-400 text-sm">
-                    ${job.details.map(d => `<li class="flex items-start gap-2"><span class="text-pink-500 mt-1">▸</span>${d}</li>`).join('')}
-                </ul>
+                <h4 class="text-lg font-semibold gradient-text">${job.company}</h4>
+                <p class="text-xs mt-2" style="color:var(--text-muted)">Click to expand ↓</p>
+                <div class="timeline-detail">
+                    <ul class="mt-4 space-y-2 text-sm" style="color:var(--text-secondary)">
+                        ${job.details.map(d => `<li class="flex items-start gap-2"><span style="color:var(--accent-pink)">▸</span>${d}</li>`).join('')}
+                    </ul>
+                </div>
             </div>
         `;
-        timelineContainer.appendChild(entry);
+        timeline.appendChild(entry);
     });
 
-    // ==============================
+    // ============================================
     //  INTERACTIVE FLOW BUILDER
-    // ==============================
-    const flowContainer = document.getElementById('flow-steps');
+    // ============================================
+    const flowContainer = document.getElementById('flow-nodes');
     const flowDetail = document.getElementById('flow-detail');
-    const flowDetailIcon = document.getElementById('flow-detail-icon');
-    const flowDetailTitle = document.getElementById('flow-detail-title');
-    const flowDetailDesc = document.getElementById('flow-detail-desc');
-    const flowDetailTech = document.getElementById('flow-detail-tech');
-    let activeStep = -1;
+    const flowIcon = document.getElementById('flow-icon');
+    const flowTitle = document.getElementById('flow-title');
+    const flowDesc = document.getElementById('flow-desc');
+    const flowTech = document.getElementById('flow-tech');
+    let activeFlow = -1;
+    let autoplayInterval = null;
 
     function renderFlow() {
         flowContainer.innerHTML = '';
-        flowSteps.forEach((step, i) => {
-            // Step node
-            const stepEl = document.createElement('div');
-            stepEl.className = `flow-step flex flex-col items-center flex-shrink-0 ${i <= activeStep ? (i === activeStep ? 'active' : 'completed') : ''}`;
-            stepEl.style.cssText = 'min-width: 70px;';
-            stepEl.innerHTML = `
-                <div class="w-14 h-14 rounded-xl border-2 ${i <= activeStep ? (i === activeStep ? 'border-pink-500 bg-pink-500/10' : 'border-green-500 bg-green-500/10') : 'border-gray-700 bg-gray-800/50'} flex items-center justify-center text-xl transition-all duration-300">
-                    ${i < activeStep ? '✓' : step.icon}
+        FLOW_STEPS.forEach((s, i) => {
+            const node = document.createElement('div');
+            node.className = `flow-node flex flex-col items-center flex-shrink-0`;
+            node.style.minWidth = '64px';
+            const isActive = i === activeFlow;
+            const isCompleted = i < activeFlow;
+            node.innerHTML = `
+                <div class="w-14 h-14 rounded-xl border-2 flex items-center justify-center text-xl transition-all" style="border-color:${isActive?'var(--accent-pink)':isCompleted?'var(--accent-green)':'var(--text-muted)'}; background:${isActive?'rgba(216,62,156,0.08)':isCompleted?'rgba(63,185,80,0.08)':'rgba(255,255,255,0.02)'}">
+                    ${isCompleted ? '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>' : s.icon}
                 </div>
-                <span class="text-xs mt-2 ${i <= activeStep ? 'text-white' : 'text-gray-500'} transition-colors">${step.label}</span>
+                <span class="text-xs mt-2 transition-colors" style="color:${i<=activeFlow?'var(--text-primary)':'var(--text-muted)'}">${s.label}</span>
             `;
-            stepEl.addEventListener('click', () => activateStep(i));
-            flowContainer.appendChild(stepEl);
+            if (isActive) node.classList.add('active');
+            if (isCompleted) node.classList.add('completed');
+            node.addEventListener('click', () => { clearInterval(autoplayInterval); activateFlow(i); });
+            flowContainer.appendChild(node);
 
-            // Connector
-            if (i < flowSteps.length - 1) {
-                const connector = document.createElement('div');
-                connector.className = `flow-connector self-center mt-[-12px] ${i < activeStep ? 'completed' : (i === activeStep ? 'active' : '')}`;
-                connector.id = `connector-${i}`;
-                flowContainer.appendChild(connector);
+            if (i < FLOW_STEPS.length - 1) {
+                const conn = document.createElement('div');
+                conn.className = `flow-connector self-center mt-[-14px] ${i < activeFlow ? 'completed' : i === activeFlow ? 'active' : ''}`;
+                conn.id = `conn-${i}`;
+                flowContainer.appendChild(conn);
             }
         });
     }
 
-    function activateStep(index) {
-        activeStep = index;
-        const step = flowSteps[index];
-
-        flowDetailIcon.textContent = step.icon;
-        flowDetailTitle.textContent = step.title;
-        flowDetailDesc.textContent = step.desc;
-        flowDetailTech.innerHTML = step.tech.map(t => `<span class="text-xs bg-white/5 text-gray-300 px-3 py-1 rounded-full">${t}</span>`).join('');
-
+    function activateFlow(i) {
+        activeFlow = i;
+        const s = FLOW_STEPS[i];
+        flowIcon.textContent = s.icon;
+        flowTitle.textContent = s.title;
+        flowDesc.textContent = s.desc;
+        flowTech.innerHTML = s.tech.map(t => `<span class="text-xs px-3 py-1 rounded-full" style="background:rgba(255,255,255,0.05); color:var(--text-secondary)">${t}</span>`).join('');
         flowDetail.classList.add('open');
         renderFlow();
 
-        // Animate data packet on the active connector
-        if (index > 0) {
-            const connector = document.getElementById(`connector-${index - 1}`);
-            if (connector) {
-                const existing = connector.querySelector('.data-packet');
-                if (existing) existing.remove();
-                const packet = document.createElement('div');
-                packet.className = 'data-packet';
-                connector.appendChild(packet);
+        // Animate packet on previous connector
+        if (i > 0) {
+            const conn = document.getElementById(`conn-${i-1}`);
+            if (conn) {
+                const old = conn.querySelector('.data-packet');
+                if (old) old.remove();
+                const pkt = document.createElement('div');
+                pkt.className = 'data-packet';
+                conn.appendChild(pkt);
             }
         }
     }
 
     renderFlow();
 
-    // ==============================
-    //  RADAR CHART
-    // ==============================
-    function drawRadar() {
-        const radarCanvas = document.getElementById('radar-canvas');
-        const rCtx = radarCanvas.getContext('2d');
-        const size = radarCanvas.width;
-        const center = size / 2;
-        const radius = size * 0.38;
+    // Autoplay
+    document.getElementById('flow-autoplay').addEventListener('click', function() {
+        activeFlow = -1;
+        clearInterval(autoplayInterval);
+        let step = 0;
+        autoplayInterval = setInterval(() => {
+            if (step >= FLOW_STEPS.length) { clearInterval(autoplayInterval); return; }
+            activateFlow(step);
+            step++;
+        }, 1500);
+    });
 
-        const labels = ['API Integration', 'Azure Cloud', 'Power Platform', 'Process Design', 'Documentation', 'Stakeholder Mgmt'];
-        const values = [0.92, 0.85, 0.88, 0.90, 0.85, 0.82];
-        const sides = labels.length;
+    // ============================================
+    //  TOOLBOX GRID
+    // ============================================
+    const toolboxGrid = document.getElementById('toolbox-grid');
+    TOOLS.forEach(t => {
+        const el = document.createElement('div');
+        el.className = 'flex flex-col items-center gap-2 tilt-card';
+        el.innerHTML = `
+            <div class="tool-icon glass" style="border: 1px solid ${t.color}33;">
+                <div class="tilt-shine" style="border-radius:12px;"></div>
+                <span>${t.icon}</span>
+            </div>
+            <span class="text-xs" style="color:var(--text-secondary)">${t.name}</span>
+        `;
+        toolboxGrid.appendChild(el);
+    });
 
-        rCtx.clearRect(0, 0, size, size);
+    // ============================================
+    //  ANIMATED CODE BLOCKS
+    // ============================================
+    // Field app code
+    const fieldAppCode = [
+        { n: 1, html: '<span class="code-comment">// Offline-first sync queue pattern</span>' },
+        { n: 2, html: '<span class="code-keyword">If</span>(<span class="code-func">Connection</span>.Connected,' },
+        { n: 3, html: '    <span class="code-func">Patch</span>(<span class="code-string">SafetyReports</span>, record),' },
+        { n: 4, html: '    <span class="code-func">SaveData</span>(<span class="code-string">localQueue</span>, record)' },
+        { n: 5, html: ');' },
+    ];
 
-        // Draw grid rings
-        for (let ring = 1; ring <= 4; ring++) {
-            const r = (radius / 4) * ring;
-            rCtx.beginPath();
-            for (let i = 0; i <= sides; i++) {
-                const angle = (Math.PI * 2 * i) / sides - Math.PI / 2;
-                const x = center + r * Math.cos(angle);
-                const y = center + r * Math.sin(angle);
-                if (i === 0) rCtx.moveTo(x, y);
-                else rCtx.lineTo(x, y);
-            }
-            rCtx.strokeStyle = 'rgba(255,255,255,0.06)';
-            rCtx.lineWidth = 1;
-            rCtx.stroke();
-        }
-
-        // Draw axes
-        for (let i = 0; i < sides; i++) {
-            const angle = (Math.PI * 2 * i) / sides - Math.PI / 2;
-            rCtx.beginPath();
-            rCtx.moveTo(center, center);
-            rCtx.lineTo(center + radius * Math.cos(angle), center + radius * Math.sin(angle));
-            rCtx.strokeStyle = 'rgba(255,255,255,0.08)';
-            rCtx.lineWidth = 1;
-            rCtx.stroke();
-        }
-
-        // Draw data polygon
-        rCtx.beginPath();
-        values.forEach((val, i) => {
-            const angle = (Math.PI * 2 * i) / sides - Math.PI / 2;
-            const x = center + radius * val * Math.cos(angle);
-            const y = center + radius * val * Math.sin(angle);
-            if (i === 0) rCtx.moveTo(x, y);
-            else rCtx.lineTo(x, y);
-        });
-        rCtx.closePath();
-
-        const gradient = rCtx.createLinearGradient(0, 0, size, size);
-        gradient.addColorStop(0, 'rgba(216, 62, 156, 0.25)');
-        gradient.addColorStop(1, 'rgba(142, 95, 168, 0.25)');
-        rCtx.fillStyle = gradient;
-        rCtx.fill();
-
-        rCtx.strokeStyle = 'rgba(216, 62, 156, 0.8)';
-        rCtx.lineWidth = 2;
-        rCtx.stroke();
-
-        // Draw data points
-        values.forEach((val, i) => {
-            const angle = (Math.PI * 2 * i) / sides - Math.PI / 2;
-            const x = center + radius * val * Math.cos(angle);
-            const y = center + radius * val * Math.sin(angle);
-            rCtx.beginPath();
-            rCtx.arc(x, y, 4, 0, Math.PI * 2);
-            rCtx.fillStyle = '#D83E9C';
-            rCtx.fill();
-            rCtx.strokeStyle = '#0D1117';
-            rCtx.lineWidth = 2;
-            rCtx.stroke();
-        });
-
-        // Draw labels
-        rCtx.font = '12px Inter, sans-serif';
-        rCtx.fillStyle = '#8B949E';
-        rCtx.textAlign = 'center';
-        labels.forEach((label, i) => {
-            const angle = (Math.PI * 2 * i) / sides - Math.PI / 2;
-            const labelR = radius + 28;
-            let x = center + labelR * Math.cos(angle);
-            let y = center + labelR * Math.sin(angle);
-
-            // Adjust alignment based on position
-            if (Math.abs(Math.cos(angle)) > 0.8) {
-                rCtx.textAlign = Math.cos(angle) > 0 ? 'left' : 'right';
-                x += Math.cos(angle) > 0 ? -10 : 10;
-            } else {
-                rCtx.textAlign = 'center';
-            }
-
-            rCtx.fillText(label, x, y + 4);
-        });
+    const fieldAppEl = document.getElementById('code-field-app');
+    if (fieldAppEl) {
+        fieldAppEl.innerHTML = fieldAppCode.map(l =>
+            `<div><span class="code-line-num">${l.n}</span>${l.html}</div>`
+        ).join('');
     }
 
-    // Draw radar when section is visible
-    const radarObserver = new IntersectionObserver((entries) => {
+    // Showcase code
+    const showcaseCode = [
+        { n: 1, html: '<span class="code-comment">// Order-to-Cash Pipeline — Simplified Architecture</span>' },
+        { n: 2, html: '' },
+        { n: 3, html: '<span class="code-keyword">interface</span> <span class="code-const">DealPayload</span> {' },
+        { n: 4, html: '  <span class="code-prop">customer</span>: <span class="code-const">Customer</span>;' },
+        { n: 5, html: '  <span class="code-prop">amount</span>: <span class="code-keyword">number</span>;' },
+        { n: 6, html: '  <span class="code-prop">products</span>: <span class="code-const">LineItem</span>[];' },
+        { n: 7, html: '}' },
+        { n: 8, html: '' },
+        { n: 9, html: '<span class="code-keyword">async function</span> <span class="code-func">processNewDeal</span>(<span class="code-prop">deal</span>: <span class="code-const">DealPayload</span>) {' },
+        { n: 10, html: '  <span class="code-comment">// Step 1: Validate & authenticate</span>' },
+        { n: 11, html: '  <span class="code-keyword">const</span> <span class="code-prop">token</span> = <span class="code-keyword">await</span> <span class="code-func">authenticate</span>(<span class="code-string">"azure-apim"</span>);' },
+        { n: 12, html: '' },
+        { n: 13, html: '  <span class="code-comment">// Step 2: Create customer in ERP</span>' },
+        { n: 14, html: '  <span class="code-keyword">const</span> <span class="code-prop">erpCustomer</span> = <span class="code-keyword">await</span> <span class="code-func">erpClient</span>.<span class="code-func">createCustomer</span>({' },
+        { n: 15, html: '    ...<span class="code-func">transformSchema</span>(deal.<span class="code-prop">customer</span>, <span class="code-string">"hubspot"</span>, <span class="code-string">"erp"</span>)' },
+        { n: 16, html: '  });' },
+        { n: 17, html: '' },
+        { n: 18, html: '  <span class="code-comment">// Step 3: Generate payment via Stripe</span>' },
+        { n: 19, html: '  <span class="code-keyword">const</span> <span class="code-prop">invoice</span> = <span class="code-keyword">await</span> <span class="code-func">stripe</span>.<span class="code-func">invoices</span>.<span class="code-func">create</span>({' },
+        { n: 20, html: '    <span class="code-prop">customer</span>: erpCustomer.<span class="code-prop">stripeId</span>,' },
+        { n: 21, html: '    <span class="code-prop">amount</span>: deal.<span class="code-prop">amount</span>,' },
+        { n: 22, html: '    <span class="code-prop">auto_advance</span>: <span class="code-bool">true</span>' },
+        { n: 23, html: '  });' },
+        { n: 24, html: '' },
+        { n: 25, html: '  <span class="code-comment">// Step 4: Notify stakeholders</span>' },
+        { n: 26, html: '  <span class="code-keyword">await</span> <span class="code-func">teams</span>.<span class="code-func">postAdaptiveCard</span>(<span class="code-string">"#deals"</span>, {' },
+        { n: 27, html: '    <span class="code-prop">title</span>: <span class="code-string">`New deal: ${deal.customer.name}`</span>,' },
+        { n: 28, html: '    <span class="code-prop">status</span>: <span class="code-string">"✓ Pipeline complete"</span>' },
+        { n: 29, html: '  });' },
+        { n: 30, html: '}' },
+    ];
+
+    const codeShowcase = document.getElementById('code-showcase');
+    let codeLineIdx = 0;
+
+    function typeCodeLine() {
+        if (codeLineIdx >= showcaseCode.length) return;
+        const line = showcaseCode[codeLineIdx];
+        const div = document.createElement('div');
+        div.innerHTML = `<span class="code-line-num">${String(line.n).padStart(2, ' ')}</span>${line.html}`;
+        div.style.opacity = '0';
+        div.style.transform = 'translateX(-8px)';
+        div.style.transition = 'opacity 0.3s, transform 0.3s';
+        codeShowcase.appendChild(div);
+        requestAnimationFrame(() => { div.style.opacity = '1'; div.style.transform = 'translateX(0)'; });
+        codeLineIdx++;
+        setTimeout(typeCodeLine, 80);
+    }
+
+    const codeObserver = new IntersectionObserver(entries => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                drawRadar();
-                radarObserver.unobserve(entry.target);
+                typeCodeLine();
+                codeObserver.unobserve(entry.target);
             }
         });
     }, { threshold: 0.3 });
-    radarObserver.observe(document.getElementById('radar-canvas'));
+    codeObserver.observe(codeShowcase);
 
-    // ==============================
+    // ============================================
+    //  TESTIMONIAL CAROUSEL
+    // ============================================
+    const carouselTrack = document.getElementById('carousel-track');
+    const carouselDots = document.getElementById('carousel-dots');
+    let currentSlide = 0;
+
+    TESTIMONIALS.forEach((t, i) => {
+        const slide = document.createElement('div');
+        slide.className = 'carousel-slide';
+        slide.innerHTML = `
+            <div class="text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="var(--accent-pink)" opacity="0.2" class="mx-auto mb-6"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+                <p class="text-lg md:text-xl leading-relaxed mb-8" style="color:var(--text-primary)">"${t.quote}"</p>
+                <p class="font-semibold" style="color:var(--text-primary)">${t.author}</p>
+                <p class="text-sm gradient-text">${t.company}</p>
+            </div>
+        `;
+        carouselTrack.appendChild(slide);
+
+        const dot = document.createElement('div');
+        dot.className = `carousel-dot ${i === 0 ? 'active' : ''}`;
+        dot.addEventListener('click', () => goToSlide(i));
+        carouselDots.appendChild(dot);
+    });
+
+    function goToSlide(i) {
+        currentSlide = i;
+        carouselTrack.style.transform = `translateX(-${i * 100}%)`;
+        document.querySelectorAll('.carousel-dot').forEach((d, j) => d.classList.toggle('active', j === i));
+    }
+
+    // Auto-rotate
+    setInterval(() => {
+        goToSlide((currentSlide + 1) % TESTIMONIALS.length);
+    }, 6000);
+
+    // ============================================
+    //  RADAR CHART
+    // ============================================
+    function drawRadar() {
+        const c = document.getElementById('radar-canvas');
+        const ctx = c.getContext('2d');
+        const w = c.width, h = c.height;
+        const cx = w / 2, cy = h / 2, r = w * 0.36;
+        const labels = ['API Integration', 'Azure Cloud', 'Power Platform', 'Process Design', 'Documentation', 'Stakeholders'];
+        const vals = [0.93, 0.86, 0.91, 0.90, 0.87, 0.84];
+        const n = labels.length;
+
+        ctx.clearRect(0, 0, w, h);
+
+        // Grid
+        for (let ring = 1; ring <= 4; ring++) {
+            const rr = (r / 4) * ring;
+            ctx.beginPath();
+            for (let i = 0; i <= n; i++) {
+                const a = (Math.PI * 2 * i) / n - Math.PI / 2;
+                const x = cx + rr * Math.cos(a), y = cy + rr * Math.sin(a);
+                i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+            }
+            ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        }
+
+        // Axes
+        for (let i = 0; i < n; i++) {
+            const a = (Math.PI * 2 * i) / n - Math.PI / 2;
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(cx + r * Math.cos(a), cy + r * Math.sin(a));
+            ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+            ctx.stroke();
+        }
+
+        // Data fill
+        ctx.beginPath();
+        vals.forEach((v, i) => {
+            const a = (Math.PI * 2 * i) / n - Math.PI / 2;
+            const x = cx + r * v * Math.cos(a), y = cy + r * v * Math.sin(a);
+            i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        });
+        ctx.closePath();
+        const grad = ctx.createLinearGradient(0, 0, w, h);
+        grad.addColorStop(0, 'rgba(216,62,156,0.2)');
+        grad.addColorStop(1, 'rgba(142,95,168,0.2)');
+        ctx.fillStyle = grad;
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(216,62,156,0.7)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Points
+        vals.forEach((v, i) => {
+            const a = (Math.PI * 2 * i) / n - Math.PI / 2;
+            const x = cx + r * v * Math.cos(a), y = cy + r * v * Math.sin(a);
+            ctx.beginPath();
+            ctx.arc(x, y, 5, 0, Math.PI * 2);
+            ctx.fillStyle = '#D83E9C';
+            ctx.fill();
+            ctx.strokeStyle = getComputedStyle(document.body).backgroundColor || '#0B0F19';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        });
+
+        // Labels
+        ctx.font = '11px Inter, sans-serif';
+        ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--text-secondary').trim() || '#8B949E';
+        labels.forEach((l, i) => {
+            const a = (Math.PI * 2 * i) / n - Math.PI / 2;
+            const lr = r + 26;
+            let x = cx + lr * Math.cos(a), y = cy + lr * Math.sin(a);
+            ctx.textAlign = Math.abs(Math.cos(a)) > 0.7 ? (Math.cos(a) > 0 ? 'left' : 'right') : 'center';
+            ctx.fillText(l, x, y + 4);
+        });
+    }
+
+    const radarObs = new IntersectionObserver(entries => {
+        entries.forEach(e => { if (e.isIntersecting) { drawRadar(); radarObs.unobserve(e.target); } });
+    }, { threshold: 0.3 });
+    radarObs.observe(document.getElementById('radar-canvas'));
+
+    // ============================================
     //  STAT COUNTERS
-    // ==============================
+    // ============================================
     function animateCounters() {
-        document.querySelectorAll('.stat-number').forEach(el => {
+        document.querySelectorAll('.stat-num').forEach(el => {
             const target = parseInt(el.dataset.target);
             const suffix = el.dataset.suffix || '';
-            const duration = 2000;
+            const dur = 2000;
             const start = performance.now();
-
-            function update(now) {
-                const progress = Math.min((now - start) / duration, 1);
-                const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
-                const current = Math.round(target * eased);
-                el.textContent = current + suffix;
-                if (progress < 1) requestAnimationFrame(update);
+            function tick(now) {
+                const p = Math.min((now - start) / dur, 1);
+                const eased = 1 - Math.pow(1 - p, 3);
+                el.textContent = Math.round(target * eased) + suffix;
+                if (p < 1) requestAnimationFrame(tick);
             }
-            requestAnimationFrame(update);
+            requestAnimationFrame(tick);
         });
     }
 
-    const statObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                animateCounters();
-                statObserver.unobserve(entry.target);
+    // ============================================
+    //  KPI SPARKLINES
+    // ============================================
+    function initSparklines() {
+        for (let s = 1; s <= 4; s++) {
+            const container = document.getElementById(`spark-${s}`);
+            if (!container) continue;
+            const bars = 12;
+            for (let i = 0; i < bars; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'kpi-bar';
+                const h = 8 + Math.random() * 24;
+                bar.style.height = '0px';
+                setTimeout(() => { bar.style.height = h + 'px'; }, i * 60 + 200);
+                container.appendChild(bar);
             }
-        });
-    }, { threshold: 0.3 });
-    statObserver.observe(document.querySelector('#about'));
+        }
+    }
 
-    // ==============================
-    //  SECTION REVEAL ON SCROLL
-    // ==============================
-    const revealObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
+    // ============================================
+    //  SKILL BARS ANIMATION
+    // ============================================
+    function animateSkillBars() {
+        document.querySelectorAll('.skill-bar-fill').forEach(bar => {
+            const w = bar.dataset.width;
+            setTimeout(() => { bar.style.width = w + '%'; }, 200);
+        });
+    }
+
+    // ============================================
+    //  SECTION REVEAL OBSERVER
+    // ============================================
+    const revealObs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                e.target.classList.add('visible');
+                // Trigger specific animations
+                if (e.target.id === 'about' || e.target.closest('#about')) { animateCounters(); initSparklines(); }
+                if (e.target.closest('#competencies')) { animateSkillBars(); }
             }
         });
     }, { threshold: 0.1 });
-    document.querySelectorAll('.section-reveal').forEach(s => revealObserver.observe(s));
+    document.querySelectorAll('.reveal, .stagger-children').forEach(el => revealObs.observe(el));
 
-    // ==============================
+    // ============================================
+    //  3D TILT CARDS
+    // ============================================
+    document.querySelectorAll('.tilt-card').forEach(card => {
+        card.addEventListener('mousemove', e => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left, y = e.clientY - rect.top;
+            const cx = rect.width / 2, cy = rect.height / 2;
+            const rotateX = ((y - cy) / cy) * -6;
+            const rotateY = ((x - cx) / cx) * 6;
+            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+
+            const shine = card.querySelector('.tilt-shine');
+            if (shine) {
+                shine.style.setProperty('--mouse-x', `${(x / rect.width) * 100}%`);
+                shine.style.setProperty('--mouse-y', `${(y / rect.height) * 100}%`);
+            }
+        });
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
+        });
+    });
+
+    // ============================================
+    //  MAGNETIC BUTTONS
+    // ============================================
+    document.querySelectorAll('.magnetic-btn').forEach(btn => {
+        btn.addEventListener('mousemove', e => {
+            const rect = btn.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+            btn.style.transform = `translate(${x * 0.15}px, ${y * 0.15}px)`;
+        });
+        btn.addEventListener('mouseleave', () => {
+            btn.style.transform = 'translate(0, 0)';
+        });
+    });
+
+    // ============================================
+    //  READING PROGRESS BAR
+    // ============================================
+    const progressBar = document.getElementById('reading-progress');
+    window.addEventListener('scroll', () => {
+        const scrolled = window.scrollY;
+        const total = document.documentElement.scrollHeight - window.innerHeight;
+        progressBar.style.width = `${(scrolled / total) * 100}%`;
+    });
+
+    // ============================================
+    //  NAV DOTS
+    // ============================================
+    const sections = ['hero','about','experience','projects','competencies','toolbox','testimonials','contact'];
+    const navDots = document.querySelectorAll('.nav-dot');
+
+    function updateNavDots() {
+        let current = 'hero';
+        sections.forEach(id => {
+            const el = document.getElementById(id);
+            if (el && window.scrollY >= el.offsetTop - 300) current = id;
+        });
+        navDots.forEach(dot => {
+            dot.classList.toggle('active', dot.dataset.section === current);
+        });
+    }
+
+    window.addEventListener('scroll', updateNavDots);
+    navDots.forEach(dot => {
+        dot.addEventListener('click', () => {
+            document.getElementById(dot.dataset.section)?.scrollIntoView({ behavior: 'smooth' });
+        });
+    });
+
+    // ============================================
+    //  SCROLL TO TOP FAB
+    // ============================================
+    const scrollTopBtn = document.getElementById('scroll-top');
+    window.addEventListener('scroll', () => {
+        scrollTopBtn.classList.toggle('visible', window.scrollY > 600);
+    });
+    scrollTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+    // ============================================
+    //  DARK / LIGHT MODE
+    // ============================================
+    const themeToggle = document.getElementById('theme-toggle');
+    const iconDark = document.getElementById('theme-icon-dark');
+    const iconLight = document.getElementById('theme-icon-light');
+
+    function setTheme(theme) {
+        document.documentElement.dataset.theme = theme;
+        localStorage.setItem('theme', theme);
+        iconDark.style.display = theme === 'dark' ? 'block' : 'none';
+        iconLight.style.display = theme === 'light' ? 'block' : 'none';
+        // Redraw radar with new colors
+        setTimeout(drawRadar, 600);
+    }
+
+    themeToggle.addEventListener('click', () => {
+        setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+    });
+
+    // Check saved or system preference
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) setTheme(savedTheme);
+    else if (window.matchMedia('(prefers-color-scheme: light)').matches) setTheme('light');
+
+    // ============================================
+    //  COMMAND PALETTE (Cmd+K)
+    // ============================================
+    const cmdOverlay = document.getElementById('cmd-overlay');
+    const cmdInput = document.getElementById('cmd-input');
+    const cmdResults = document.getElementById('cmd-results');
+    let cmdActiveIdx = 0;
+
+    function openCmd() { cmdOverlay.classList.add('open'); cmdInput.value = ''; cmdInput.focus(); renderCmdResults(''); }
+    function closeCmd() { cmdOverlay.classList.remove('open'); }
+
+    function renderCmdResults(query) {
+        const q = query.toLowerCase();
+        const filtered = CMD_ITEMS.filter(item => item.label.toLowerCase().includes(q));
+        cmdActiveIdx = 0;
+        cmdResults.innerHTML = filtered.map((item, i) => `
+            <div class="cmd-item ${i === 0 ? 'active' : ''}" data-index="${i}">
+                <span class="cmd-item-icon">${item.icon}</span>
+                <span class="cmd-item-label">${item.label}</span>
+                ${item.section ? '<span class="cmd-item-shortcut">↵ jump</span>' : '<span class="cmd-item-shortcut">↵ run</span>'}
+            </div>
+        `).join('');
+
+        cmdResults.querySelectorAll('.cmd-item').forEach((el, i) => {
+            el.addEventListener('click', () => executeCmd(filtered[i]));
+            el.addEventListener('mouseenter', () => {
+                cmdResults.querySelectorAll('.cmd-item').forEach(e => e.classList.remove('active'));
+                el.classList.add('active');
+                cmdActiveIdx = i;
+            });
+        });
+    }
+
+    function executeCmd(item) {
+        closeCmd();
+        if (item.section) {
+            document.getElementById(item.section)?.scrollIntoView({ behavior: 'smooth' });
+        } else if (item.action === 'theme') {
+            setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+        } else if (item.action === 'matrix') {
+            document.getElementById('matrix-toggle').click();
+        } else if (item.action === 'share') {
+            copyLink();
+        } else if (item.action === 'linkedin') {
+            window.open('https://linkedin.com/in/danattfield', '_blank');
+        }
+    }
+
+    document.getElementById('cmd-trigger')?.addEventListener('click', openCmd);
+    cmdOverlay.addEventListener('click', e => { if (e.target === cmdOverlay) closeCmd(); });
+    cmdInput.addEventListener('input', e => renderCmdResults(e.target.value));
+
+    document.addEventListener('keydown', e => {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); openCmd(); return; }
+        if (e.key === 'Escape') { closeCmd(); return; }
+
+        if (cmdOverlay.classList.contains('open')) {
+            const items = cmdResults.querySelectorAll('.cmd-item');
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                cmdActiveIdx = (cmdActiveIdx + 1) % items.length;
+                items.forEach((el, i) => el.classList.toggle('active', i === cmdActiveIdx));
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                cmdActiveIdx = (cmdActiveIdx - 1 + items.length) % items.length;
+                items.forEach((el, i) => el.classList.toggle('active', i === cmdActiveIdx));
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                const filtered = CMD_ITEMS.filter(item => item.label.toLowerCase().includes(cmdInput.value.toLowerCase()));
+                if (filtered[cmdActiveIdx]) executeCmd(filtered[cmdActiveIdx]);
+            }
+        }
+    });
+
+    // ============================================
     //  MOBILE MENU
-    // ==============================
-    const mobileToggle = document.getElementById('mobile-toggle');
+    // ============================================
     const mobileMenu = document.getElementById('mobile-menu');
-    const mobileClose = document.getElementById('mobile-close');
     const mobileOverlay = document.getElementById('mobile-overlay');
-    const mobileLinks = document.querySelectorAll('.mobile-link');
 
-    function openMenu() { mobileMenu.classList.add('open'); mobileOverlay.classList.remove('hidden'); }
-    function closeMenu() { mobileMenu.classList.remove('open'); mobileOverlay.classList.add('hidden'); }
+    function openMobile() { mobileMenu.classList.add('open'); mobileOverlay.classList.remove('hidden'); }
+    function closeMobile() { mobileMenu.classList.remove('open'); mobileOverlay.classList.add('hidden'); }
 
-    mobileToggle.addEventListener('click', openMenu);
-    mobileClose.addEventListener('click', closeMenu);
-    mobileOverlay.addEventListener('click', closeMenu);
-    mobileLinks.forEach(link => link.addEventListener('click', closeMenu));
+    document.getElementById('mobile-toggle').addEventListener('click', openMobile);
+    document.getElementById('mobile-close').addEventListener('click', closeMobile);
+    mobileOverlay.addEventListener('click', closeMobile);
+    document.querySelectorAll('.mobile-link').forEach(l => l.addEventListener('click', closeMobile));
 
-    // ==============================
-    //  SHARE BUTTON
-    // ==============================
-    document.getElementById('share-button').addEventListener('click', () => {
+    // ============================================
+    //  SHARE / COPY LINK
+    // ============================================
+    function showToast(text) {
+        const toast = document.getElementById('toast');
+        document.getElementById('toast-text').textContent = text;
+        toast.classList.remove('opacity-0', 'translate-y-4');
+        toast.classList.add('opacity-100', 'translate-y-0');
+        setTimeout(() => {
+            toast.classList.remove('opacity-100', 'translate-y-0');
+            toast.classList.add('opacity-0', 'translate-y-4');
+        }, 2500);
+    }
+
+    function copyLink() {
         if (navigator.share) {
             navigator.share({ title: 'Daniel Attfield — Technical BA', url: window.location.href });
         } else {
-            navigator.clipboard.writeText(window.location.href).then(() => {
-                const toast = document.getElementById('toast');
-                toast.classList.remove('opacity-0', 'translate-y-4');
-                toast.classList.add('opacity-100', 'translate-y-0');
-                setTimeout(() => {
-                    toast.classList.remove('opacity-100', 'translate-y-0');
-                    toast.classList.add('opacity-0', 'translate-y-4');
-                }, 2500);
-            });
+            navigator.clipboard.writeText(window.location.href).then(() => showToast('Link copied to clipboard!'));
         }
-    });
+    }
+
+    document.getElementById('share-btn')?.addEventListener('click', copyLink);
+
+    // ============================================
+    //  INITIAL REVEAL (hero elements)
+    // ============================================
+    setTimeout(() => {
+        document.querySelectorAll('#hero .reveal').forEach((el, i) => {
+            setTimeout(() => el.classList.add('visible'), i * 150);
+        });
+    }, 200);
+
     </script>
 </body>
 </html>
